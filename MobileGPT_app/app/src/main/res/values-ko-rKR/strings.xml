@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FluidGPT</string>
+    <string name="accessibility_service_description">앱을 자동으로 사용해주는 모바일 GPT</string>
+</resources>

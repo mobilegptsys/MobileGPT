@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#CCFFFFFF"
+    android:orientation="vertical"
+    android:padding="8dp">
+    <TextView
+        android:id="@+id/overlay_text"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:text="Test Fluid" />
+
+    <LinearLayout
+        android:id="@+id/question_answer_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+        <EditText
+            android:id="@+id/overlay_edit"
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"
+            android:hint="Enter your answer"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send" />
+        <Button
+            android:id="@+id/my_self"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:text="Do myself"/>
+    </LinearLayout>
+</LinearLayout>

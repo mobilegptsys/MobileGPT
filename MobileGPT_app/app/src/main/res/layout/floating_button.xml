@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="Actions"
+        android:alpha="0.5"
+        android:theme="@style/Theme.MaterialComponents.Bridge"
+        app:fabSize="normal"
+        app:icon="@drawable/fluid_icon"
+        app:iconTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/finish_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:fabSize="mini"
+        android:alpha="0.5"
+        android:theme="@style/Theme.AppCompat.DayNight"
+        app:layout_constraintEnd_toEndOf="@+id/fab"
+        app:layout_constraintBottom_toTopOf="@+id/fab"
+        app:srcCompat="@drawable/baseline_stop_24"
+        android:contentDescription="Finish the instruction" />
+
+    <TextView
+        android:id="@+id/finish_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Finish instruction"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/finish_fab"
+        app:layout_constraintEnd_toStartOf="@+id/finish_fab"
+        app:layout_constraintTop_toTopOf="@+id/finish_fab"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/myself_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:fabSize="mini"
+        android:alpha="0.5"
+        android:theme="@style/Theme.AppCompat.DayNight"
+        app:layout_constraintEnd_toEndOf="@+id/finish_fab"
+        app:layout_constraintBottom_toTopOf="@+id/finish_fab"
+        app:srcCompat="@drawable/baseline_follow_the_signs_24"
+        android:contentDescription="Do this action my self" />
+
+    <TextView
+        android:id="@+id/myself_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Do myself"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/myself_fab"
+        app:layout_constraintEnd_toStartOf="@+id/myself_fab"
+        app:layout_constraintTop_toTopOf="@+id/myself_fab"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/continue_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:fabSize="mini"
+        android:alpha="0.5"
+        android:theme="@style/Theme.AppCompat.DayNight"
+        app:layout_constraintEnd_toEndOf="@+id/myself_fab"
+        app:layout_constraintBottom_toTopOf="@+id/myself_fab"
+        app:srcCompat="@drawable/baseline_auto_mode_24"
+        android:contentDescription="Continue with GPT" />
+
+    <TextView
+        android:id="@+id/continue_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Continue"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/continue_fab"
+        app:layout_constraintEnd_toStartOf="@+id/continue_fab"
+        app:layout_constraintTop_toTopOf="@+id/continue_fab"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/action_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:fabSize="mini"
+        android:alpha="0.5"
+        android:theme="@style/Theme.AppCompat.DayNight"
+        app:layout_constraintEnd_toEndOf="@+id/continue_fab"
+        app:layout_constraintBottom_toTopOf="@+id/continue_fab"
+        app:srcCompat="@drawable/baseline_change_circle_24"
+        android:contentDescription="Modify action" />
+
+    <TextView
+        android:id="@+id/action_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Modify Action"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/action_fab"
+        app:layout_constraintEnd_toStartOf="@+id/action_fab"
+        app:layout_constraintTop_toTopOf="@+id/action_fab"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
