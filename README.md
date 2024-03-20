@@ -145,7 +145,7 @@ Each JSON file within the dataset follows the structure outlined below:
 }
 ```
 + **JSON Structure Explanation**: 
-    + **instruction**: Provides a brief overview or description of the instruction.
+    + **instruction**: Provides a natural language user instruction for the given task.
     + **steps**: Contains an array of steps to complete the instruction.
         + **step**: Indicates the step count/order.
         + **HTML representation**: Contains an array of steps to complete the instruction.
