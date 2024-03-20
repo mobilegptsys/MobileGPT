@@ -121,6 +121,40 @@ Benchmark Dataset
 
      + **Xmls Folder**: xml files detailing the structure of the application's UI for each step (e.g., `1.xml`, `2.xml`, etc.).
 
+## JSON Structure
+
+Each JSON file within the dataset follows the structure outlined below:
+
+```json
+{
+    "instruction": "<instruction>",
+    "steps": [
+        {
+            "step": "<step count>",
+            "HTML representation": "<text representation of the screen parsed in HTML format>",
+            "action": {
+                "name": "<name of the action to take>",
+                "args": {
+                    "index": "<index of the UI on which the action needs to be performed>",
+                }
+            },
+            "screenshot": "<screenshot file_name>",
+            "xml": "<raw_xml file_name>"
+        }
+    ]
+}
+```
++ **JSON Structure Explanation**: 
+    + **instruction**: Provides a brief overview or description of the instruction.
+    + **steps**: Contains an array of steps to complete the instruction.
+        + **step**: Indicates the step count/order.
+        + **HTML representation**: Contains an array of steps to complete the instruction.
+        + **action**: Contains an array of steps to complete the instruction.
+            + **name**: Contains an array of steps to complete the instruction.
+            + **args**: Arguments specifying additional details for the action.
+        + **screenshot**: File name of the associated screenshot.
+        + **xml**: File name of the associated raw XML file.
+
 # Note
 
 - Since MobileGPT is a research software, it may produce unexpected behavior or results (automatic payments, unsubscribing the account), so it is recommended to check its behavior carefully.
