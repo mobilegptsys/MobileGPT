@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.fluidgpt'
+    namespace 'com.example.MobileGPT'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.fluidgpt"
+        applicationId "com.example.MobileGPT"
         minSdk 33
         targetSdk 33
         versionCode 1

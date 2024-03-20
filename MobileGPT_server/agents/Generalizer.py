@@ -5,14 +5,6 @@ from utils.Utils import get_children_with_depth_and_rank, get_siblings_with_rank
 
 class Generalizer:
     @classmethod
-    def generalize_actions(cls, edges, arguments):
-        for edge in edges:
-            screen_xml = edge.event['screen']
-            action = edge.event['response']
-            generalized_response = cls.generalize_action(screen_xml, action, arguments)
-            edge.event['response'] = generalized_response
-
-    @classmethod
     def generalize_action(cls, screen: str, action: dict, arguments: dict) -> dict:
 
         arguments_ = {}
@@ -28,7 +20,12 @@ class Generalizer:
 
     @classmethod
     def generalize_to_screen(cls, action: dict, screen: str, api_args: dict) -> dict:
-        print(api_args)
+        api_args_ = {}
+        for arg in api_args.keys():
+            if arg not in action['args'].keys():
+                api_args_[f"{arg}"] = api_args[f"{arg}"]
+
+        api_args = api_args_
 
         action_args = action['args']
         ui_index = action_args['index']

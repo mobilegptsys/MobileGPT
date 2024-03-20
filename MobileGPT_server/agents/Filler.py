@@ -8,9 +8,6 @@ class Filler:
     def adapt_action(cls, screen: str, action: dict, arguments: dict) -> dict:
         # log("adapting command: " + json.dumps(command) + " to : \n" + json.dumps(arguments) + "\n" + screen)
 
-        print("adapting")
-        print(action)
-
         if action['name'] == "finish":
             action["args"] = {"response": "Success!"}
 
@@ -30,6 +27,11 @@ class Filler:
         if 'index' in action['args']:
             adapted_action = cls.adapt_action_to_arguments(action, arguments)
             adapted_action = cls.adapt_action_to_screen(adapted_action, screen)
+
+            if adapted_action != None:
+                if adapted_action["name"] == "input":
+                    if adapted_action["args"]["input_text"] == "unknown":
+                        return None
 
             return adapted_action
 
@@ -60,9 +62,6 @@ class Filler:
     def adapt_action_to_screen(cls, action: dict, screen: str) -> dict | None:
         action_name = action['name']
         action_args = action['args']
-
-        print("adapting")
-        print(action)
 
         action_attrib = action_args.copy()
         del action_attrib['index']

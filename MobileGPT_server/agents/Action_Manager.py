@@ -12,6 +12,7 @@ from agents.Filler import Filler
 from utils import Examplifier
 
 from utils.Utils import log, update_memory
+import xml.etree.ElementTree as ET
 
 class Action_Manager:
     def __init__(self, sub_task_edge: Sub_task_Edge, arguments: dict = {}, reasoning: dict = {}, is_vision=False, app=""):
@@ -23,6 +24,11 @@ class Action_Manager:
 
         # { < argument_name >: {'description': < description >, 'value': < value >}, ...}
         self.arguments = arguments
+        self.scroll_element = None
+
+        if "wanted_information" in self.arguments.keys():
+            self.scroll_element = copy.deepcopy(self.arguments["wanted_information"]["value"])
+            del self.arguments["wanted_information"]
 
         self.error_count = 0
 
@@ -33,7 +39,6 @@ class Action_Manager:
         self.prev_state_index: int = -1
 
         self.last_traveling_edge : Action_Edge = None
-        self.edges_traveled = []
 
         self.infer_agent: Infer_Agent = Infer_Agent(f"{self.goal_sub_task}")
         self.infer_agent.info_needed = self.arguments
@@ -41,8 +46,13 @@ class Action_Manager:
         self.is_vision = is_vision
         self.app = app
 
-        self.dont_save = False
+        self.last_action_is_loaded = False
         self.scr_shot_path = ""
+
+        self.error_pre_state_index = -1
+        self.error_current_state_index = -1
+
+        self.previous_actions = []
 
     def operate(self, encoded_xml, scr_shot_path):
         log("Action Manager received new screen", 'yellow')
@@ -57,6 +67,18 @@ class Action_Manager:
         action = self.action_from_state(self.current_state_index)
         log(f"load saved action information", "blue")
 
+        if self.scroll_element is not None:
+            tree = ET.fromstring(self.current_screen)
+
+            for element in tree.iter():
+                if 'description' in element.attrib.keys():
+                    if self.scroll_element in element.attrib['description']:
+                        action = None
+                if "text" in element.keys():
+                    if element.text != None:
+                        if self.scroll_element in element.text:
+                            action = None
+
         if action is None:
             log(f"There is not saved information about current state {self.current_state_index}", "blue")
             # Make example from previous screen and corresponding command.
@@ -64,22 +86,22 @@ class Action_Manager:
             # Inference new command from this screen.
             action = self.infer_action(encoded_xml, example_template)
 
-            self.prev_state_index = self.current_state_index
+            self.prev_state_index = self.current_state_index        #change state
             self.current_state_index = self.sub_task_edge.add_action_state(self.current_screen)
 
-            if self.last_traveling_edge is not None:
+            if self.last_traveling_edge is not None and self.last_action_is_loaded == False:
                 self.last_traveling_edge.start = self.prev_state_index
                 self.last_traveling_edge.target = self.current_state_index
                 self.last_traveling_edge.result = "Command success, continue with the next command."
 
                 self.generalize_action()
 
-                if not self.dont_save:
-                    self.last_traveling_edge.update_memory(self.app)
-
-                self.dont_save = False
+                self.last_traveling_edge.update_memory(self.app)
+                self.previous_actions.append(self.last_traveling_edge)
 
             self.make_edge(state=self.sub_task_edge.action_states[self.current_state_index])
+
+            self.last_action_is_loaded = False
 
         else:
             log(f"I know current state({self.prev_state_index})'s action to the state({self.current_state_index})", "blue")
@@ -94,16 +116,16 @@ class Action_Manager:
         else:
             response = self.infer_agent.infer_action_no_vision(self.goal_sub_task, self.sub_task_reason, screen, example=example, feedback=feedback)
 
-        self.infer_agent.action_history.append(response)
+        self.infer_agent.action_history.append(copy.deepcopy(response))
 
         return response
 
     def make_edge(self, state=None, finish_graph: bool = False, destination_node_index: int = -1):
         if finish_graph:
-            self.prev_state_index = self.current_state_index
-            self.current_state_index = self.sub_task_edge.add_action_state(self.current_screen)
+            if self.last_action_is_loaded == False and self.error_count <= 1:
+                self.prev_state_index = self.current_state_index        #change state
+                self.current_state_index = self.sub_task_edge.add_action_state(self.current_screen)
 
-            if not self.dont_save:
                 self.last_traveling_edge.destination = destination_node_index
                 self.last_traveling_edge.start = self.prev_state_index
                 self.last_traveling_edge.target = self.current_state_index
@@ -112,20 +134,38 @@ class Action_Manager:
                 self.generalize_action()
 
                 self.last_traveling_edge.update_memory(self.app)
+                self.previous_actions.append(self.last_traveling_edge)
 
-            self.dont_save = False
+                if self.last_traveling_edge.event["response"]["thoughts"]["command"]["name"] != "finish":
+
+                    response = {"thoughts": {
+                        "reasoning": "",
+                        "completion": "100%",
+                        "criticism": "",
+                        "command": {"name": "finish",
+                                    "args": {"response": f"{self.goal_sub_task} complete!"}}}}
+
+                    self.infer_agent.action_history.append(copy.deepcopy(response))
+
+                    self.make_edge(state=self.sub_task_edge.action_states[self.current_state_index])
+
+                    self.last_traveling_edge.start = self.current_state_index
+                    self.last_traveling_edge.result = "Command success, finish command. and the sub_task is ended"
+
+                    self.last_traveling_edge.update_memory(self.app)
+                    self.previous_actions.append(self.last_traveling_edge)
+
+                    return response
 
         else:
             edge = state.add_action_edge(action_start_state=self.prev_state_index,
                                          goal=self.infer_agent.goal_sub_task,
                                          info=self.infer_agent.info_needed,
                                          history=self.infer_agent.action_history[:-1],
-                                         response=self.infer_agent.action_history[-1])
+                                         response=copy.deepcopy(self.infer_agent.action_history[-1]))
 
             edge.traversed = True
-            self.dont_save = False
 
-            self.edges_traveled.append(edge)
             self.last_traveling_edge = edge
 
     def Answer(self, info: str) -> dict:
@@ -141,23 +181,28 @@ class Action_Manager:
             self.arguments[name]['value'] = value
             self.goal_sub_task = self.parse_arguments(self.description, self.arguments)
 
-        if not self.dont_save:
+        if self.last_action_is_loaded == False:
             self.last_traveling_edge.result = f"Assistant:\"{question}\", User:\"{value}\""
+            self.last_traveling_edge.start = self.prev_state_index
             self.last_traveling_edge.target = self.current_state_index
+
+            self.generalize_action()
+
             self.last_traveling_edge.update_memory(self.app)
+            self.previous_actions.append(self.last_traveling_edge)
 
         action = self.action_from_state(self.current_state_index)
 
+        feedback = f"Feedback: The answers to previous questions you asked (\"{question}\") are: \"{value}\"."
+
         if action is None:
             example_str = self.example_from_state(self.current_state_index)
-            feedback = f"Feedback: The answers to previous questions you asked (\"{question}\") are: \"{value}\"."
-
             self.infer_agent.action_history.append({"thoughts": feedback})
 
             action = self.infer_action(self.current_screen, example=example_str, feedback=feedback)
 
-        self.prev_state_index = self.current_state_index
-        self.current_state_index = self.sub_task_edge.add_action_state(self.current_screen)
+            self.prev_state_index = self.current_state_index
+            self.current_state_index = self.sub_task_edge.add_action_state(self.current_screen)
 
         self.make_edge(state=self.sub_task_edge.action_states[self.current_state_index])
 
@@ -165,76 +210,75 @@ class Action_Manager:
 
     def Error(self, msg: str) -> dict:
         log("Command Agent received Error: " + msg, 'red')
-        self.error_count += 1
-        if self.error_count > 1:
-            return self.force_quit_action()
-
-        last_action = self.infer_agent.action_history[-1]
-        prev_response = last_action
+        prev_response = self.infer_agent.action_history[-1]
         prev_command = prev_response['thoughts']['command']['name']
 
         # Add Error message as the result of previous command
-        self.last_traveling_edge.result = f"Error: command '{prev_command}' failed. {msg}"
+        #self.last_traveling_edge.result = f"Error: command '{prev_command}' failed. {msg}"
+
+        feedback = f"Feedback: previous command '{prev_command}' failed. {msg}."
+
+        if self.error_count == 0:
+            self.error_pre_state_index = self.prev_state_index
+            self.error_current_state_index = self.current_state_index
+
+        if self.error_count != 0:
+            self.prev_state_index = self.error_pre_state_index
+            self.current_state_index = self.error_current_state_index
+
+        self.error_count += 1
+        if self.error_count > 1:
+            return feedback, self.force_quit_action()
 
         action = self.action_from_state(self.current_state_index)
 
         if action is None:
             example_str = self.example_from_state(self.current_state_index)
-            feedback = f"Feedback: previous command '{prev_command}' failed. {msg}."
-
             self.infer_agent.action_history.append({"thoughts": feedback})
 
             action = self.infer_action(self.current_screen, example=example_str, feedback=feedback)
 
-        del self.edges_traveled[-1]
         del self.sub_task_edge.action_states[self.current_state_index].action_edges[-1]
         self.make_edge(self.sub_task_edge.action_states[self.current_state_index])
 
         return feedback, action
 
+    def force_quit_action(self) -> dict:
+        if self.error_count > 1:
+            #에러 발생시 종료된 것
+            log("error is repeating just quit this action", "red")
 
-    def force_quit_action(self, finish_task=False, already_saved=None) -> dict:
-        if finish_task:
-            log("Finish the proceeding sub task", "red")
-            if already_saved:
+            if len(self.previous_actions) != 0:
                 response = {"thoughts": {
                     "reasoning": "",
                     "completion": "100%",
                     "criticism": "",
                     "command": {"name": "finish",
-                                "args": {"response": f"{self.goal_sub_task} complete!"}}}}
-                return response
-        else:
-            log("error is repeating just quit this action", "red")
+                                "args": {"response": f"{self.goal_sub_task} maybe complete!"}}}}
 
-        if len(self.edges_traveled) == 0:
+                self.infer_agent.action_history.append(copy.deepcopy(response))
+
+                self.make_edge(state=self.sub_task_edge.action_states[self.current_state_index])
+
+                self.last_traveling_edge.start = self.current_state_index
+                self.last_traveling_edge.result = "Command success, finish command. and the sub_task is ended"
+
+                self.last_traveling_edge.update_memory(self.app)
+                self.previous_actions.append(self.last_traveling_edge)
+
+                return response
+
             response = {"thoughts": {
                 "reasoning": "",
                 "completion": "100%",
                 "criticism": "",
                 "command": {"name": "finish",
                             "args": {"response": f"Error performing action: {self.goal_sub_task}, lets try other approach."}}}}
-        else:
-            response = {"thoughts": {       #"args": {"response": f"Looks like I finished the {self.goal_sub_task}"}}}}
-                "reasoning": "",
-                "completion": "100%",
-                "criticism": "",
-                "command": {"name": "finish",
-                            "args": {"response": f"Error performing action: {self.goal_sub_task}, lets try other approach. if action is scroll, then there is no change about scroll action's result."}}}}
 
-        self.infer_agent.action_history.append(response)
-
-        self.prev_state_index = self.current_state_index
-        self.current_state_index = self.sub_task_edge.add_action_state(self.current_screen)
-        self.make_edge(self.sub_task_edge.action_states[self.current_state_index])
-
-        self.last_traveling_edge.update_memory(self.app)
-
-        return response
+            return  response
 
     def action_from_state(self, state_index: int) -> dict | None:
         #print(self.sub_task_edge.action_states)
-
         state_index = str(state_index)
 
         if state_index in self.sub_task_edge.action_states:
@@ -247,24 +291,29 @@ class Action_Manager:
             return None
 
         for edge in state.action_edges:
-            log(f"examining edge to: state #{edge.start}, traversed: {edge.traversed}")
+            log(f"examining adapt edge to: state #{edge.start}, traversed: {edge.traversed}")
             if edge.traversed is False:
-                log(f"found path! adapting command to: state #{edge.start}", "cyan")
+                log(f"found path! adapting command to: start state #{edge.start} and target state #{edge.target}", "cyan")
                 adapt_action = Filler.adapt_action(self.current_screen, copy.deepcopy(edge.event['response']["thoughts"]["command"]), self.arguments)
 
                 if adapt_action == "skip_ask":
                     edge.traversed = True
-                    continue
+                    self.prev_state_index = self.current_state_index
+                    self.current_state_index = int(edge.target)
+
+                    self.last_traveling_edge = edge
+                    self.last_action_is_loaded = True
+
+                    return self.action_from_state(self.current_state_index)
 
                 if adapt_action is not None:
                     edge.traversed = True
 
-                    #self.last_traveling_edge = edge
-                    #self.edges_traveled.append(edge)
-
                     self.prev_state_index = self.current_state_index
                     self.current_state_index = int(edge.target)
-                    self.dont_save = True
+
+                    self.last_traveling_edge = edge
+                    self.last_action_is_loaded = True
 
                     log(json.dumps(adapt_action), "blue")
 
@@ -277,7 +326,7 @@ class Action_Manager:
                     response_["thoughts"]["command"] = adapt_action
 
                     # add adapted response to event history.
-                    self.infer_agent.action_history.append(response_)
+                    self.infer_agent.action_history.append(copy.deepcopy(response_))
 
                     return response_
 
@@ -285,7 +334,6 @@ class Action_Manager:
         return None
 
     def example_from_state(self, state_index: int) -> str | None:
-
         state_index = str(state_index)
 
         if state_index in self.sub_task_edge.action_states:
@@ -298,7 +346,8 @@ class Action_Manager:
             return None
 
         for edge in state.action_edges:
-            log(f"examining edge to: state #{edge.target}, traversed: {edge.traversed}")
+            log(f"examining example edge to: state #{edge.start}, traversed: {edge.traversed}")
+
             if edge.traversed is False:
                 screen = edge.event['screen']
                 goal = edge.event['goal']
@@ -309,7 +358,6 @@ class Action_Manager:
                 if response["thoughts"]["command"]["name"] in ["click", "long-click", "input", "scroll"]:
                     example_str = Examplifier.generate_example_str(screen, goal, info, history, response)
 
-                    edge.traversed = True
                     return example_str
 
         log(f"no path to make example!", "red")
@@ -317,20 +365,10 @@ class Action_Manager:
 
     def generalize_action(self):
         if self.last_traveling_edge.event['response']['thoughts']['command']['name'] in ['click', 'long-click', 'scroll', 'input']:
-
-            state: Action_State = self.sub_task_edge.action_states[self.prev_state_index]
-            before_generalize = copy.deepcopy([edge.event['response']['thoughts']['command'] for edge in state.action_edges])
-
             log(f"""generalizing sub task graph for last action: {self.goal_sub_task}, before action - {self.last_traveling_edge.event['response']}""", 'white')
             Generalizer.generalize_action(self.last_traveling_edge.event["screen"], self.last_traveling_edge.event['response']['thoughts']['command'], self.arguments)
-            #self.last_traveling_edge.update_memory(self.app)
 
-            after_action = self.last_traveling_edge.event['response']['thoughts']['command']
-            
             log(f"""generalizing sub task graph for last action: {self.goal_sub_task}, after action - {self.last_traveling_edge.event['response']}""", 'white')
-
-            if after_action in before_generalize:
-                self.dont_save = True
 
 
     def parse_arguments(self, description, arguments: dict) -> str:

@@ -181,7 +181,10 @@ class MobileGPT_Operator:
                 # if this is not the starting vertex, generalize command graph
                 if self.current_node_index != -2:
                     # generalize actions for the sub_task.
-                    self.action_manager.make_edge(finish_graph=True, destination_node_index=node_index)
+                    response = self.action_manager.make_edge(finish_graph=True, destination_node_index=node_index)     #그전에 마지막 action이 종료됐다면
+                    if response != None:
+                        self.action_history.append(copy.deepcopy(response))
+
                     self.sub_task_history_summary.append(Select_Agent.make_sub_task_summary(self.screen_graph.screen_nodes[self.current_node_index].sub_tasks_dict, self.current_sub_task, self.action_history))
                 log("new Screen!", "red")
                 return True, node_index
@@ -252,6 +255,7 @@ class MobileGPT_Operator:
                             if sub_task is not None:
                                 past_sub_task['traversed'] = True
                                 return sub_task
+
         return None
 
     def infer(self):
@@ -294,8 +298,8 @@ class MobileGPT_Operator:
 
     #api : {name":<api_name>, "description": <description of what api intends to do>, parameters":{"<parameter_name>":"<parameter description>",...}, "app": "<name of the app to execute this command, if specified. Otherwise, write \'unknown\'>}
     def finish_instruction(self):
-        self.action_manager.force_quit_action(finish_task=True, already_saved=self.already_saved)
-        log(f"Finished!", "red")
+        #self.action_manager.force_quit_action()
+        log(f"your instruction Finished!", "red")
         # send finishing code.
         self.socket.send("$$$$$".encode())
         self.socket.send("\r\n".encode())
@@ -333,6 +337,12 @@ class MobileGPT_Operator:
         feedback, self.recent_response = self.action_manager.Error(err_msg)
         self.action_history.append(copy.deepcopy(feedback))
         self.action_history.append(copy.deepcopy(self.recent_response))
+
+        if self.recent_response["thoughts"]["command"]["name"] == "finish":
+            if self.recent_response["thoughts"]["command"]["args"]["response"].split(" ")[0] == "Error":
+                del self.sub_task_history[-1]
+            else:
+                del self.action_history[-5:-1]
 
         return self.recent_response
 

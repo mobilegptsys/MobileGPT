@@ -14,6 +14,19 @@ class Sub_task_Edge:
     def add_action_state(self, screen_xml, index=None) -> int:
         self.state_count = len(self.action_states)
 
+        for state in self.action_states:
+            state_ = self.action_states[state]
+            skip_count = False
+
+            for edge in state_.action_edges:
+                if edge.event["response"]["thoughts"]["command"]["name"] == "finish":
+                    skip_count = True
+
+            if skip_count:
+                self.state_count -= 1
+
+        print(self.state_count)
+
         if index == None:
             index = self.state_count
 
@@ -64,4 +77,4 @@ class Action_Edge:
         data = [self.source, self.sub_task["name"], self.start, self.target, self.event["screen"], self.event["goal"], json.dumps(self.event["info"]), json.dumps(self.event["history"]), json.dumps(self.event["response"]), self.result, self.destination]
         update_memory(f"./server_memory/database/{app}/{app}_edge.csv", data)
 
-        log(f"strore action edge result : {self.result}", "red")
+        log(f"store action edge result : {self.result}", "red")

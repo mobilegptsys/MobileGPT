@@ -160,6 +160,9 @@ class Screen_Graph:
             if len(sub_task["UI_index"])!=0:
                 sub_tasks.append(sub_task)
 
+        for sub_task in sub_tasks:
+            self.screen_nodes[screen_node_index].sub_tasks_dict[sub_task["name"]] = sub_task
+
         tmp_expanded_sub_task = []
         for sub_task in expanded_sub_task:
             if len(sub_task["UI_index"])!=0:
@@ -624,6 +627,6 @@ class Screen_Node:
 
 
     def initial_sub_tasks(self):
-        self.sub_tasks_dict["Scroll"] = {"name": "Scroll", "description": "Useful for when you need to scroll up or down to view more UIs and actions.","parameters": {"direction": "direction to scroll"}}
+        self.sub_tasks_dict["Scroll"] = {"name": "Scroll", "description": "Useful for when you need to scroll up or down to view more UIs and actions but you must stop when you find or see that you want.","parameters": {"direction": "direction to scroll", "wanted_information": "what is that you found?"}}
         self.sub_tasks_dict["Send Screen to User"] = {"name": "Send Screen to User", "description": "send the user requested information in the screen to the user", "parameters": {"information": "what you want to say to the user in natural language (non-question format)."}}
         self.sub_tasks_dict["Finish"] = {"name": "Finish", "description": "Task has been completed", "parameters": {"response": "Final response to let user know you have finished the task"}}

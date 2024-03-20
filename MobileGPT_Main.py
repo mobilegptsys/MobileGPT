@@ -7,8 +7,8 @@ from MobileGPT_Server import MobileGPT_Server
 
 os.environ["OPENAI_API_KEY"] = ""
 os.environ["GOOGLESEARCH_KEY"] = ""
-os.environ["PINECONE_KEY"] = ""
-os.environ["PINECONE_ENVIRONMENT"] = "asia-northeast1-gcp"
+os.environ["PINECONE_KEY"] = "="
+os.environ["PINECONE_ENVIRONMENT"] = ""
 
 os.environ["PARAMETER_FILLER_AGENT_GPT_VERSION"] = "gpt-4"
 os.environ["APP_SELECT_AGENT_GPT_VERSION"] = "gpt-4"

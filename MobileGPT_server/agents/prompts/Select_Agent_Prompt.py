@@ -17,7 +17,8 @@ Constraints:
 2. Exclusively use the action listed below.
 3. Always choose the best matching action. Ignore the ordering of the actions in the list.
 4. If past events indicate that the task has been completed, make sure to use the 'finish' action.
-5. You can't ask users to control their smart phone. Only you can control it. However, you can ask for information.
+5. You must choose your next action from a predefined list of actions.
+6. You can't ask users to control their smart phone. Only you can control it. However, you can use ask for information use Ask action.
 
 List of actions(you can use):
 {sub_tasks} 
@@ -25,8 +26,8 @@ List of actions(you can use):
 Performance Evaluation:
 1. Continuously review and analyze your actions to ensure you are performing to the best of your abilities.
 2. Constructively self-evaluate how close you are to completing the task.
-3. Reflect on past events to refine your approach.
-4. Every action has a cost, so be smart and efficient. Aim to complete the task in the least number of steps.
+3. Reflect on past events to refine your approach. It may be unnecessary to repeat actions that have already been taken in the past. 
+4. Every action has a cost, so be smart and efficient. Aim to complete the task in the least number of steps. If you have already accomplished the given Task, you should call Finish without needing to do anything further.
 
 Begin!
 """
@@ -42,7 +43,7 @@ Constraints:
 3. Always choose the best matching action. Ignore the ordering of the actions in the list.
 4. If past events indicate that the task has been completed, make sure to use the 'finish' action.
 5. You must choose your next action from a predefined list of actions.
-6. You can't ask users to control their smart phone. Only you can control it. However, you can ask for information.
+6. You can't ask users to control their smart phone. Only you can control it. However, you can use ask for information use Ask action.
 
 List of actions(you can use):
 {sub_tasks}
@@ -50,8 +51,8 @@ List of actions(you can use):
 Performance Evaluation:
 1. Continuously review and analyze your actions to ensure you are performing to the best of your abilities.
 2. Constructively self-evaluate how close you are to completing the task.
-3. Reflect on past events to refine your approach.
-4. Every action has a cost, so be smart and efficient. Aim to complete the task in the least number of steps.
+3. Reflect on past events to refine your approach. It may be unnecessary to repeat actions that have already been taken in the past. 
+4. Every action has a cost, so be smart and efficient. Aim to complete the task in the least number of steps. If you have already accomplished the given Task, you should call Finish without needing to do anything further.
 
 Begin!
 """
