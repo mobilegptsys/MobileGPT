@@ -141,7 +141,7 @@ public static final int HOST_PORT = 12345;
 6. MobileGPT Server will analyze all captured pages and generate a memory for the app.
 
 # Note
-+ Since MobileGPT is a research software, it may produce unexpected behavior or results (automatic payments, unsubscribing the account), so it is recommended to check its behavior carefully.
++ MobileGPT is a research software. It may produce unexpected behavior or results (automatic payments, unsubscribing the account), so it is recommended to check its behavior carefully.
 + The open-source version of MobileGPT does not include Human-in-the-Loop memory repair. But you can modify the memory manually in ./Server/memory/ folder.
 # About Dataset
 ## Dataset Structure
