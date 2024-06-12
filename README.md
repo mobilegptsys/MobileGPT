@@ -3,9 +3,12 @@ This repository is an implementation of the code for :
 
 [MobileGPT: Augmenting LLM with Human-like App Memory for Mobile Task Automation]
 
-For accessing the our Benchmark Dataset, you can download it from [Google Cloud](https://drive.google.com/file/d/18Te3l0VtoxsZtEQYPTUylivVSqa-WBdG/view?usp=sharing), 
+For accessing our Benchmark Dataset, you can download it from [Google Cloud](https://drive.google.com/file/d/18Te3l0VtoxsZtEQYPTUylivVSqa-WBdG/view?usp=sharing), 
 you can check related information [About Dataset](#About-Dataset). 
 
+## Abstract
+
+> The advent of large language models (LLMs) has opened up new opportunities in the field of mobile task automation. Their superior language understanding and reasoning capabilities allow users to automate complex and repetitive tasks. However, due to the inherent unreliability and high operational cost of LLMs, their practical applicability is quite limited. To address these issues, this paper introduces MobileGPT, an innovative LLM-based mobile task automator equipped with a human-like app memory. MobileGPT emulates the cognitive process of humans interacting with a mobile app—explore, select, derive, and recall. This approach allows for a more precise and efficient learning of a task’s procedure by breaking it down into smaller, modular sub-tasks that can be re-used, re-arranged, and adapted for various objectives. We implement MobileGPT using online LLMs services (GPT-3.5 and GPT-4) and evaluate its performance on a dataset of 160 user instructions across 8 widely used mobile apps. The results indicate that MobileGPT can automate and learn new tasks with 82.5% accuracy, and is able to adapt them to different contexts with near perfect (98.75%) accuracy while reducing both latency and cost by 62.5% and 68.8%, respectively, compared to the GPT-4 powered baseline.
 
 # Installation
 Make sure you have:
@@ -97,7 +100,9 @@ Now you're all set. Let's run it
 5. MobileGPT will automatically launch appropriate app and interact with it to complete the given instruction.
 
 # Offline Explorer
-Our open-source version of MobileGPT does not include Random Explorer. Instead, we provide an offline explorer that lets you explore app pages manually.
+Our open-source version of MobileGPT does not include Random Explorer. Instead, we provide an offline explorer that lets you explore app pages manually. 
++ Note that offline exploration is not mandatory. MobileGPT can explore pages on demand.
++ But offline explorer can make task execution faster.
 ## Server
 To run offline explorer, inside Server/main.py file,
 modify
@@ -138,7 +143,7 @@ public static final int HOST_PORT = 12345;
 6. MobileGPT Server will analyze all captured pages and generate a memory for the app.
 
 # Note
-+ Since MobileGPT is a research software, it may produce unexpected behavior or results (automatic payments, unsubscribing the account), so it is recommended to check its behavior carefully.
++ MobileGPT is a research software. It may produce unexpected behavior or results (automatic payments, unsubscribing the account), so it is recommended to check its behavior carefully.
 + The open-source version of MobileGPT does not include Human-in-the-Loop memory repair. But you can modify the memory manually in ./Server/memory/ folder.
 # About Dataset
 ## Dataset Structure
