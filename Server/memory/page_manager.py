@@ -48,7 +48,6 @@ class PageManager:
 
         self.subtask_db = pd.concat([self.subtask_db, pd.DataFrame([subtask_data])], ignore_index=True)
         self.subtask_db.to_csv(self.subtask_db_path, index=False)
-        log("added new subtask to the database")
 
     def get_next_subtask_data(self, subtask_name: str) -> dict:
         # Filter the subtask_db for rows matching the specific 'name'
@@ -80,8 +79,6 @@ class PageManager:
             "traversed": True
         }
         self.action_data.append(new_action_data)
-
-        log(f"added new action \"{action['name']}\" for subtask \"{subtask_name}\" to the database")
 
     def get_next_action(self, subtask: dict, screen: str, step: int):
         curr_subtask_name = subtask['name']

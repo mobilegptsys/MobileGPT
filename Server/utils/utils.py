@@ -74,7 +74,7 @@ def query(messages, model="gpt-4-turbo", is_list=False):
         presence_penalty=0
     )
     result = response.choices[0].message.content
-    log(result, 'green')
+    # log(result, 'green')
     json_formatted_response = __parse_json(result, is_list=is_list)
     if json_formatted_response:
         return json.loads(json_formatted_response)

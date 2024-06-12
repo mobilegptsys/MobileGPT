@@ -29,6 +29,7 @@ public class MobileGPTAccessibilityService extends AccessibilityService{
     public FloatingButtonManager mFloatingButtonManager;
     private HashMap<Integer, AccessibilityNodeInfo> nodeMap;
     private String targetPackageName; // variables for current state.
+    private String finalTargetPackageName;
     private ExecutorService mExecutorService;
     private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     private String currentScreenXML = "";
@@ -73,7 +74,7 @@ public class MobileGPTAccessibilityService extends AccessibilityService{
         for (AccessibilityWindowInfo window : windows) {
             AccessibilityNodeInfo root = window.getRoot();
             if (root != null) {
-                if (root.getPackageName().equals(targetPackageName)) {
+                if (root.getPackageName().equals(finalTargetPackageName)) {
                     return root;
                 }
             }
@@ -86,10 +87,13 @@ public class MobileGPTAccessibilityService extends AccessibilityService{
         reset();
         mExecutorService.execute(this::initNetworkConnection);
         mExecutorService.execute(()-> mClient.sendPackageName(targetPackageName));
+        finalTargetPackageName = targetPackageName;
     }
 
     public void finish(){
         mExecutorService.execute(()-> mClient.sendFinish());
+        mFloatingButtonManager.shrink();
+
     }
 
     public void captureScreen() {

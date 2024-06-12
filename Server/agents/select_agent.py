@@ -12,6 +12,7 @@ class SelectAgent:
         self.instruction = instruction
 
     def select(self, available_subtasks: list, subtask_history: list, qa_history: list, screen: str) -> dict:
+        log(f":::SELECT:::", "blue")
         select_prompts = select_agent_prompt.get_prompts(self.instruction, available_subtasks, subtask_history, qa_history, screen)
         response = query(select_prompts, model=os.getenv("SELECT_AGENT_GPT_VERSION"))
 

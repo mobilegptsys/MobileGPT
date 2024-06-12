@@ -55,7 +55,7 @@ class AppAgent:
                 log("New app detected: " + package_name, "green")
 
         self.database.to_csv(self.database_path, index=False)
-        log(f"Number of stored applications: {len(self.database)}", "green")
+        log(f"App Analyze Finished. Number of stored applications: {len(self.database)}", "blue")
 
     def predict_app(self, instruction) -> str:
         self.database['embedding'] = self.database.embedding.apply(safe_literal_eval)

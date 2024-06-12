@@ -167,7 +167,7 @@ class Memory:
     def get_next_action(self, subtask: dict, screen: str) -> dict:
         next_action = self.page_manager.get_next_action(subtask, screen, self.curr_action_step)
         self.curr_action_step += 1
-        log(f":::DERIVE::: Recalling action : {next_action}", "blue")
+        log(f":::DERIVE:::", "blue")
         return next_action
 
     def save_action(self, subtask: dict, action: dict, example=None) -> None:

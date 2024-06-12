@@ -35,7 +35,7 @@ class NodeManager:
                 final_supported_subtasks = supported_subtasks
                 final_match_case = match_case
 
-        log(f":::EXPLORE::: final search result: page #{final_page_index}. It is {final_match_case}", "blue")
+        log(f":::EXPLORE:::", "blue")
 
         if final_page_index >= 0:
             final_page_data = json.loads(self.page_db.loc[final_page_index].to_json())
@@ -64,9 +64,7 @@ class NodeManager:
         supported_subtask_names = []
         new_trigger_uis_for_subtasks = {}
         for subtask_name, trigger_uis in trigger_uis_for_subtasks.items():
-            print(f"matching subtask: {subtask_name}")
             found_trigger_uis = self.__find_required_uis(tree, trigger_uis)
-            print(f"matching trigger nodes: {[index for index in found_trigger_uis]}")
             if len(found_trigger_uis) >= len(trigger_uis):
                 supported_subtask_names.append(subtask_name)
                 new_trigger_uis_for_subtasks[subtask_name] = found_trigger_uis
@@ -80,10 +78,13 @@ class NodeManager:
                               subtask['name'] in supported_subtask_names]
 
         if num_remaining_uis == 0 and pct_subtask_supported == 1.0:
+            print("EQSET")
             return supported_subtasks, "EQSET"
         elif num_remaining_uis == 0 and pct_subtask_supported > 0:
+            print("SUBSET")
             return supported_subtasks, "SUBSET"
         elif num_remaining_uis > 0 and pct_subtask_supported >= self.match_threshold:
+            print("SUPERSET")
             self.node_expansion_backup = copy.deepcopy(
                 (self.html_xml, self.parsed_xml, page_node, new_trigger_uis_for_subtasks, self.remaining_ui_indexes))
             return supported_subtasks, "SUPERSET"
@@ -114,7 +115,6 @@ class NodeManager:
         for subtask in old_subtasks:
             subtask["trigger_UIs"] = subtasks_with_new_trigger_uis[subtask['name']]
 
-        log(":::Node Expand:::", "yellow")
         new_subtasks_raw = query(
             node_expand_prompt.get_prompts(html_xml, old_trigger_ui_indexes, old_subtasks, new_ui_indexes),
             model=os.getenv("EXPLORE_AGENT_GPT_VERSION"), is_list=True)

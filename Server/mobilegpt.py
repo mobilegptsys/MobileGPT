@@ -161,7 +161,6 @@ class MobileGPT:
 
     def __finish_subtask(self, mark_finish=True):
         log("finish subtask!!", "red")
-        log(f"subtask: {self.subtask_status}, task: {self.task_status}", "red")
         if self.subtask_status == Status.LEARN and self.task_status == Status.LEARN:
             if mark_finish:
                 finish_action = {"name": "finish", "parameters": {}}

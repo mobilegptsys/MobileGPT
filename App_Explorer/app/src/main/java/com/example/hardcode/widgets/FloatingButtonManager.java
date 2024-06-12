@@ -168,7 +168,7 @@ public class FloatingButtonManager implements View.OnClickListener{
         mFLoatingButton.extend();
         mIsAllFabsVisible = true;
     }
-    private void shrink() {
+    public void shrink() {
         for (FloatingActionButton fab : subFabs) {
             fab.hide();
         }

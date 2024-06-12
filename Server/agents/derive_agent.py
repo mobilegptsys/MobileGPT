@@ -23,7 +23,6 @@ class DeriveAgent:
         self.action_history = []
 
     def derive(self, screen: str, examples=None) -> (dict, dict):
-        log("-----Derive Phase Start-----", "blue")
         if examples is None:
             examples = []
 

@@ -5,7 +5,6 @@ from utils.utils import generate_numbered_list
 
 def get_usr_prompt(action_history):
     # Remove completion rate from the list of actions. This confuses GPT.
-    print(action_history)
     for action in action_history:
         del action['completion_rate']
     numbered_history = generate_numbered_list(action_history)

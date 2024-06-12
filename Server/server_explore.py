@@ -45,7 +45,7 @@ class Explorer:
         screen_parser = xmlEncoder()
         screens = []
 
-        screen_count = 99
+        screen_count = 0
         while True:
             raw_message_type = client_socket.recv(1)
             if not raw_message_type:
@@ -63,6 +63,9 @@ class Explorer:
                 log(f"package name: {package_name}", "blue" )
                 app_name = app_agent.get_app_name(package_name)
                 log(f"App name: {app_name}", "blue")
+                if (package_name == ""):
+                    log("Package name is empty", "red")
+                    return
 
                 now = datetime.now()
                 # dd/mm/YY H:M:S
@@ -78,9 +81,9 @@ class Explorer:
                 raw_xml = self.__recv_xml(client_socket, screen_count)
 
                 parsed_xml, hierarchy_xml, encoded_xml = screen_parser.encode(raw_xml, screen_count)
-                screen_count -= 1
+                screen_count += 1
                 screens.append({"parsed": parsed_xml, "hierarchy": hierarchy_xml, "encoded": encoded_xml})
-                log(f"screen count: {screen_count}", "blue")
+                log(f"captured new screen: #{screen_count}", "green")
 
             elif message_type == 'S':
                 file_info = b''
@@ -102,6 +105,7 @@ class Explorer:
             elif message_type == 'F':
                 for screen in screens:
                     page_index, _ = memory.search_node(screen['parsed'], screen['hierarchy'], screen['encoded'])
+                    print(page_index)
                     if page_index == -1:
                         page_index, _ = explore_agent.explore(screen['parsed'], screen['hierarchy'], screen['encoded'])
             else:

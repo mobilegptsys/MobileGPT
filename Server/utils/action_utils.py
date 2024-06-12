@@ -75,7 +75,7 @@ def adapt_action_to_arguments(action: dict, subtask_args: dict) -> (dict, bool):
     return action_copy
 
 
-def adapt_action_to_screen(action: dict, screen: str) -> dict | None:
+def adapt_action_to_screen(action: dict, screen: str):
     action_name = action['name']
     action_args = action['parameters']
 
