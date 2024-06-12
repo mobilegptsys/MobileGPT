@@ -3,7 +3,7 @@ This repository is an implementation of the code for :
 
 [MobileGPT: Augmenting LLM with Human-like App Memory for Mobile Task Automation]
 
-For accessing the our Benchmark Dataset, you can download it from [Google Cloud](https://drive.google.com/file/d/18Te3l0VtoxsZtEQYPTUylivVSqa-WBdG/view?usp=sharing), 
+For accessing our Benchmark Dataset, you can download it from [Google Cloud](https://drive.google.com/file/d/18Te3l0VtoxsZtEQYPTUylivVSqa-WBdG/view?usp=sharing), 
 you can check related information [About Dataset](#About-Dataset). 
 
 ## Abstract
