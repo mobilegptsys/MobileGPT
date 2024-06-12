@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MobileGPTGlobal {
-    public static final String HOST_IP = "192.168.0.126";
+    // Replace this ip address with the ip address of the server
+    public static final String HOST_IP = "0.0.0.0";
     public static final int HOST_PORT = 12345;
     public static final String STRING_ACTION = "com.example.MobileGPT.STRING_ACTION";
     public static final String INSTRUCTION_EXTRA = "com.example.MobileGPT.INSTRUCTION_EXTRA";

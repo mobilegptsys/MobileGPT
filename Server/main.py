@@ -1,7 +1,7 @@
 import os, sys
 from dotenv import load_dotenv
 from server import Server
-from server_hardcode import ServerHardCode
+from server_explore import Explorer
 
 # os.chdir('./MobileGPT_server')
 sys.path.append('.')
@@ -15,7 +15,6 @@ os.environ["SELECT_AGENT_GPT_VERSION"] = "gpt-4-turbo"
 os.environ["DERIVE_AGENT_GPT_VERSION"] = "gpt-4o"
 os.environ["PARAMETER_FILLER_AGENT_GPT_VERSION"] = "gpt-4o"
 os.environ["ACTION_SUMMARIZE_AGENT_GPT_VERSION"] = "gpt-4o"
-
 os.environ["SUBTASK_MERGE_AGENT_GPT_VERSION"] = "gpt-4o"
 
 os.environ["gpt_4"] = "gpt-4"
@@ -35,21 +34,11 @@ def main():
         server_ip = sys.argv[1]
         server_port = sys.argv[2]
 
-        server_vision = False
-        if len(sys.argv) >= 4:
-            server_vision = sys.argv[3]
-
-            if server_vision == "True":
-                server_vision = True
-
-            elif server_vision == "False":
-                server_vision = False
-
-    mobilGPT_server = Server(host=server_ip, port=int(server_port), buffer_size=4096, server_vision=server_vision)
+    mobilGPT_server = Server(host=server_ip, port=int(server_port), buffer_size=4096)
     mobilGPT_server.open()
 
-    # mobilGPT_server_hardcode = ServerHardCode(host=server_ip, port=int(server_port), buffer_size=4096, server_vision=server_vision)
-    # mobilGPT_server_hardcode.open()
+    # mobilGPT_explorer = Explorer(host=server_ip, port=int(server_port), buffer_size=4096)
+    # mobilGPT_explorer.open()
 
 
 if __name__ == '__main__':

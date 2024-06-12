@@ -12,13 +12,11 @@ from datetime import datetime
 
 
 class Server:
-    def __init__(self, host='000.000.000.000', port=0, buffer_size=4096, server_vision=False):
+    def __init__(self, host='000.000.000.000', port=0, buffer_size=4096):
         self.host = host
         self.port = port
         self.buffer_size = buffer_size
         self.memory_directory = './memory'
-
-        self.is_vision = server_vision
 
         # Create the directory for saving received files if it doesn't exist
         if not os.path.exists(self.memory_directory):
