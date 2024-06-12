@@ -100,7 +100,9 @@ Now you're all set. Let's run it
 5. MobileGPT will automatically launch appropriate app and interact with it to complete the given instruction.
 
 # Offline Explorer
-Our open-source version of MobileGPT does not include Random Explorer. Instead, we provide an offline explorer that lets you explore app pages manually.
+Our open-source version of MobileGPT does not include Random Explorer. Instead, we provide an offline explorer that lets you explore app pages manually. 
++ Note that offline exploration is not mandatory. MobileGPT can explore pages on demand.
++ But offline explorer can make task execution faster.
 ## Server
 To run offline explorer, inside Server/main.py file,
 modify
