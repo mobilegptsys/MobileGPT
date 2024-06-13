@@ -103,11 +103,11 @@ class Explorer:
                     f.write(image_data)
 
             elif message_type == 'F':
-                for screen in screens:
+                for screen_num, screen in enumerate(screens):
                     page_index, _ = memory.search_node(screen['parsed'], screen['hierarchy'], screen['encoded'])
                     print(page_index)
                     if page_index == -1:
-                        page_index, _ = explore_agent.explore(screen['parsed'], screen['hierarchy'], screen['encoded'])
+                        page_index, _ = explore_agent.explore(screen['parsed'], screen['hierarchy'], screen['encoded'], screen_num)
             else:
                 log("unknown message type: " + message_type, "red")
 

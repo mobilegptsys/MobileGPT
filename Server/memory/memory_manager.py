@@ -70,7 +70,7 @@ class Memory:
         node_index, available_subtasks = node_manager.search(candidate_nodes_indexes)
         return node_index, available_subtasks
 
-    def add_node(self, available_subtasks: list, trigger_uis: dict, extra_uis: list, screen: str) -> int:
+    def add_node(self, available_subtasks: list, trigger_uis: dict, extra_uis: list, screen: str, screen_num=None) -> int:
         new_index = len(self.page_db)
         new_row = {'index': new_index, 'available_subtasks': json.dumps(available_subtasks),
                    'trigger_uis': json.dumps(trigger_uis),
@@ -85,7 +85,7 @@ class Memory:
             available_subtasks_df = pd.DataFrame(available_subtasks)
             available_subtasks_df.to_csv(os.path.join(page_path, "available_subtasks.csv"), index=False)
             os.makedirs(page_screen_path)
-        parsing_utils.save_screen_info(self.app, self.task_name, page_screen_path)
+        parsing_utils.save_screen_info(self.app, self.task_name, page_screen_path, screen_num)
 
         return new_index
 

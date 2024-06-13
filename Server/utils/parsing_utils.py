@@ -164,7 +164,7 @@ def get_extra_ui_attributes(trigger_ui_indexes: list, screen: str):
     return extra_ui_attributes
 
 
-def get_ui_key_attrib(ui_index: int, screen: str, include_desc=False) -> dict:
+def get_ui_key_attrib(ui_index: int, screen: str, include_desc=True) -> dict:
     tree = ET.fromstring(screen)
     """
     [ ({"index": <ui index>}, <depth>, <rank>), ...]
@@ -290,7 +290,7 @@ def find_element_by_depth_and_rank(element, target_depth, rank, current_depth=1)
     return None
 
 
-def save_screen_info(app_name: str, task_name: str, dest_dir: str) -> None:
+def save_screen_info(app_name: str, task_name: str, dest_dir: str, screen_num=None) -> None:
     def parse_datetime(dirname):
         return datetime.strptime(dirname, "%Y_%m_%d %H:%M:%S")
 
@@ -313,12 +313,15 @@ def save_screen_info(app_name: str, task_name: str, dest_dir: str) -> None:
 
     files = [f for f in os.listdir(most_recent_screenshot_path) if f.endswith('.jpg')]
     indices = [get_index(file) for file in files]
-    max_index = max(indices) if indices else None  # Check if the list is not empty
+    if screen_num is not None:
+        index = screen_num
+    else:
+        index = max(indices) if indices else None  # Check if the list is not empty
 
-    shutil.copy(os.path.join(most_recent_screenshot_path, f"{max_index}.jpg"), os.path.join(dest_dir, "screenshot.jpg"))
-    shutil.copy(os.path.join(most_recent_xml_path, f"{max_index}.xml"), os.path.join(dest_dir, "raw.xml"))
-    shutil.copy(os.path.join(most_recent_xml_path, f"{max_index}_encoded.xml"), os.path.join(dest_dir, "html.xml"))
-    shutil.copy(os.path.join(most_recent_xml_path, f"{max_index}_hierarchy_parsed.xml"),
+    shutil.copy(os.path.join(most_recent_screenshot_path, f"{index}.jpg"), os.path.join(dest_dir, "screenshot.jpg"))
+    shutil.copy(os.path.join(most_recent_xml_path, f"{index}.xml"), os.path.join(dest_dir, "raw.xml"))
+    shutil.copy(os.path.join(most_recent_xml_path, f"{index}_encoded.xml"), os.path.join(dest_dir, "html.xml"))
+    shutil.copy(os.path.join(most_recent_xml_path, f"{index}_hierarchy_parsed.xml"),
                 os.path.join(dest_dir, "hierarchy.xml"))
-    shutil.copy(os.path.join(most_recent_xml_path, f"{max_index}_parsed.xml"), os.path.join(dest_dir, "parsed.xml"))
-    shutil.copy(os.path.join(most_recent_xml_path, f"{max_index}_pretty.xml"), os.path.join(dest_dir, "pretty.xml"))
+    shutil.copy(os.path.join(most_recent_xml_path, f"{index}_parsed.xml"), os.path.join(dest_dir, "parsed.xml"))
+    shutil.copy(os.path.join(most_recent_xml_path, f"{index}_pretty.xml"), os.path.join(dest_dir, "pretty.xml"))

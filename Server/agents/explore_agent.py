@@ -13,7 +13,7 @@ class ExploreAgent:
     def __init__(self, memory: Memory):
         self.memory = memory
 
-    def explore(self, parsed_xml, hierarchy_xml, html_xml) -> (int, list):
+    def explore(self, parsed_xml, hierarchy_xml, html_xml, screen_num=None) -> (int, list):
         """
         Desc: Generate a new node based on the given screen xmls
         return: index of the new node.
@@ -32,7 +32,7 @@ class ExploreAgent:
 
         available_subtasks = [{key: value for key, value in subtask.items() if key != 'trigger_UIs'} for subtask in
                               subtasks_raw]
-        new_node_index = self.memory.add_node(available_subtasks, subtasks_trigger_ui_attributes, extra_ui_attributes, parsed_xml)
+        new_node_index = self.memory.add_node(available_subtasks, subtasks_trigger_ui_attributes, extra_ui_attributes, parsed_xml, screen_num)
 
         self.memory.add_hierarchy_xml(hierarchy_xml, new_node_index)
 
