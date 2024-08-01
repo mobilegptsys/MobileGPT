@@ -18,9 +18,14 @@ default_actions = [
     },
     {
         "name": "long-click",
-        "description": "Long-click a UI to see more options relevant to the UI. You can use this only for UIs with long-clickable attribute",
+        "description": "Long-click a UI. You can use this only for UIs with long-clickable attribute",
         "parameters": {"index": {"type": "integer", "description": "index of the UI element to be clicked"}}
     },
+    # {
+    #     "name": "long-click",
+    #     "description": "Long-click a UI to see more options relevant to the UI. You can use this only for UIs with long-clickable attribute",
+    #     "parameters": {"index": {"type": "integer", "description": "index of the UI element to be clicked"}}
+    # },
     {
         "name": "input",
         "description": "Input text on the screen.",
@@ -86,7 +91,7 @@ def get_sys_prompt():
 
         "Respond using the JSON format described below\n"
         "Response Format:\n"
-        '{"reasoning": <reasoning>, "action": {"name":<action_name>, "parameters": {<parameter_name>: <parameter_value>,...}},'
+        '{"reasoning": <reasoning based on past events and screen HTML code>, "action": {"name":<action_name>, "parameters": {<parameter_name>: <parameter_value>,...}},'
         '"completion_rate": <indicate how close you are to completing the task>, "plan": <plan for your next moves>}\n'
         "Begin!"
     )
@@ -110,17 +115,17 @@ def get_usr_prompt(instruction, subtask, history, screen, examples):
             usr_msg += (
                 f"[EXAMPLE #{i}]\n"
                 f"User's final goal (instruction): {example_instruction}\n"
-                "(Only complete the below subtask given to you. Do not proceed further steps)\n"
+                "(Only complete the below subtask given to you. You can ignore parameters with unknown values. But Do not proceed further steps)\n"
                 f"Subtask given to you: {example_subtask}\n\n"
-                
+
                 "Past Events:\n"
                 "'''\n"
                 f"...(abbreviated for brevity)...\n"
                 f"'''\n\n"
-                
+
                 "HTML code of the current app screen delimited by <screen> </screen>:\n"
                 f"<screen>{example_screen}</screen>\n\n"
-            
+
                 "Response:\n"
                 f"{example_response}\n"
                 f"[END OF EXAMPLE {i}]\n\n"
@@ -130,7 +135,7 @@ def get_usr_prompt(instruction, subtask, history, screen, examples):
 
     usr_msg += (
         f"User's final goal (instruction): {instruction}\n"
-        "(Only complete the below subtask given to you. Do not proceed further steps)\n"
+        "(Only complete the below subtask given to you. You can ignore parameters with unknown values. But Do not proceed further steps)\n"
         f"Subtask given to you: {json.dumps(subtask)}\n\n"
 
         "Past Events:\n"

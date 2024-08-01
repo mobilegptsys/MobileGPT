@@ -64,11 +64,32 @@ class Memory:
         self.page_manager = self.page_managers[page_index]
 
     def search_node(self, parsed_xml, hierarchy_xml, encoded_xml) -> (int, list):
-        candidate_nodes_indexes = self.__search_similar_hierarchy_nodes(hierarchy_xml)
+        # candidate_nodes_indexes = self.__search_similar_hierarchy_nodes(hierarchy_xml)
+        #
+        # node_manager = NodeManager(self.page_db, self, parsed_xml, encoded_xml)
+        # node_index, new_subtasks = node_manager.search(candidate_nodes_indexes)
+        most_similar_node_index = self.__search_most_similar_hierarchy_node(hierarchy_xml)
+        if most_similar_node_index >= 0:
+            return most_similar_node_index, []
+        else:
+            return -1, []
 
-        node_manager = NodeManager(self.page_db, self, parsed_xml, encoded_xml)
-        node_index, available_subtasks = node_manager.search(candidate_nodes_indexes)
-        return node_index, available_subtasks
+    def get_available_subtasks(self, page_index):
+        return self.page_managers[page_index].get_available_subtasks()
+
+    def add_new_action(self, new_action, page_index):
+        self.page_managers[page_index].add_new_action(new_action)
+
+    def search_node_by_hierarchy(self, parsed_xml, hierarchy_xml, encoded_xml) -> (int, list):
+        # 1. First search for at most 5 candidate nodes based only on the hierarchy of the screen
+        most_similar_node_index = self.__search_most_similar_hierarchy_node(hierarchy_xml)
+
+        if most_similar_node_index >= 0:
+            page_data = json.loads(self.page_db.loc[most_similar_node_index].to_json())
+            available_subtasks = json.loads(page_data['available_subtasks'])
+            return most_similar_node_index, available_subtasks
+        else:
+            return -1, []
 
     def add_node(self, available_subtasks: list, trigger_uis: dict, extra_uis: list, screen: str, screen_num=None) -> int:
         new_index = len(self.page_db)
@@ -140,6 +161,9 @@ class Memory:
                               "parameters": {}
                               }
             return finish_subtask
+        elif next_subtask_name == "scroll_screen":
+            scroll_subtask = {"name": "scroll_screen", "parameters": {"scroll_ui_index": 1, "direction": 'down'}}
+            return scroll_subtask
 
         if next_subtask_name:
             next_subtask_data = self.page_manager.get_next_subtask_data(next_subtask_name)
@@ -259,7 +283,8 @@ class Memory:
 
         condition = (self.task_db['name'] == new_task_data['name'])
         if condition.any():
-            self.task_db.loc[condition] = new_task_data
+            for column in new_task_path.keys():
+                self.task_db.loc[condition, column] = new_task_path[column]
         else:
             self.task_db = pd.concat([self.task_db, pd.DataFrame([new_task_data])], ignore_index=True)
 
@@ -298,6 +323,20 @@ class Memory:
             candidate_node_indexes.append(node['index'])
 
         return candidate_node_indexes
+
+    def __search_most_similar_hierarchy_node(self, hierarchy) -> int:
+        new_hierarchy_vector = np.array(get_openai_embedding(hierarchy))
+        self.hierarchy_db["similarity"] = self.hierarchy_db.embedding.apply(
+            lambda x: cosine_similarity(x, new_hierarchy_vector))
+
+        # get top apps with the highest similarity
+        candidates = self.hierarchy_db.sort_values('similarity', ascending=False).head(5).to_dict(orient='records')
+        if candidates:
+            highest_similarity = candidates[0]['similarity']
+            print(highest_similarity)
+            if highest_similarity > 0.95:
+                return candidates[0]['index']
+        return -1
 
     def __merge_subtasks_data(self, original_subtasks_data, merged_subtasks) -> list:
         len_diff = len(original_subtasks_data) - len(merged_subtasks)

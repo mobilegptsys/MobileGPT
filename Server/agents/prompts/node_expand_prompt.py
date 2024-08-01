@@ -24,7 +24,6 @@ def get_sys_prompt():
         "For example, if you have 'input_name', 'input_email', 'input_phone_number' actions separately in the list, "
         "merge them into a single 'fill_in_info' action.\n\n"
 
-
         "***Hints for understanding screen***:\n"
         "1. Each HTML element represents an UI element on the screen.\n"
         "2. multiple UI elements can collectively serve a single purpose. "
@@ -52,13 +51,17 @@ def get_sys_prompt():
     return sys_msg
 
 
-def get_first_usr_prompt(screen, trigger_ui_indexes: list):
+def get_first_usr_prompt(screen, trigger_ui_indexes: list, subtasks):
     usr_msg = (
         "HTML code of a mobile app screen :\n"
         f"<screen>{screen}</screen>\n\n"
 
         "index of UI elements to extract actions:\n"
         f"{json.dumps(trigger_ui_indexes)}\n\n"
+
+        "actions already known:\n"
+        f"{json.dumps(subtasks)}\n"
+        "Do not make actions that are similar to those in the list.\n\n"
 
         "Try not to make duplicate actions with your previous responses. Ignore the UI index if it has the same action as before.\n\n"
 
@@ -74,23 +77,31 @@ def get_assistant_prompt(subtasks: list):
     return assistant_msg
 
 
-def get_second_usr_prompt(unknown_ui_indexes: list):
+def get_second_usr_prompt(all_known_subtasks, unknown_ui_indexes: list):
     usr_msg = (
+        "actions already known:\n"
+        f"{json.dumps(all_known_subtasks)}\n"
+        "Do not make actions that are similar to those in the list.\n\n"
+
         "index of UI elements to extract actions:\n"
         f"{json.dumps(unknown_ui_indexes)}\n\n"
 
-        "Try not to make duplicate actions with your previous responses. Ignore the UI index if it has the same action as before.\n\n"
+        "Try not to make duplicate actions. Ignore the UI index if it has the same action as before.\n\n"
 
         "Response:\n"
     )
     return usr_msg
 
 
-def get_prompts(screen: str, trigger_ui_indexes: list, subtasks: list, unknown_ui_indexes: list):
+def get_prompts(screen: str, extra_subtasks: list, trigger_ui_indexes: list, supported_subtasks: list,
+                unknown_ui_indexes: list):
     sys_msg = get_sys_prompt()
-    usr_msg_1 = get_first_usr_prompt(screen, trigger_ui_indexes)
-    assistant_msg = get_assistant_prompt(subtasks)
-    usr_msg_2 = get_second_usr_prompt(unknown_ui_indexes)
+    usr_msg_1 = get_first_usr_prompt(screen, trigger_ui_indexes, extra_subtasks)
+    assistant_msg = get_assistant_prompt(supported_subtasks)
+    for subtask in supported_subtasks:
+        del subtask["trigger_UIs"]
+    all_known_subtasks = supported_subtasks + extra_subtasks
+    usr_msg_2 = get_second_usr_prompt(all_known_subtasks, unknown_ui_indexes)
     messages = [{"role": "system", "content": sys_msg},
                 {"role": "user", "content": usr_msg_1},
                 {"role": "assistant", "content": assistant_msg},

@@ -18,7 +18,7 @@ os.environ["ACTION_SUMMARIZE_AGENT_GPT_VERSION"] = "gpt-4o"
 os.environ["SUBTASK_MERGE_AGENT_GPT_VERSION"] = "gpt-4o"
 
 os.environ["gpt_4"] = "gpt-4"
-os.environ["gpt_4_turbo"] = "gpt-4o"
+os.environ["gpt_4_turbo"] = "gpt-4-turbo"
 os.environ["gpt_3_5_turbo"] = "gpt-3.5-turbo"
 
 os.environ["vision_model"] = "gpt-4o"

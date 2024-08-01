@@ -13,7 +13,7 @@ class ExploreAgent:
     def __init__(self, memory: Memory):
         self.memory = memory
 
-    def explore(self, parsed_xml, hierarchy_xml, html_xml, screen_num=None) -> (int, list):
+    def explore(self, parsed_xml, hierarchy_xml, html_xml, screen_num=None) -> int:
         """
         Desc: Generate a new node based on the given screen xmls
         return: index of the new node.
@@ -21,6 +21,12 @@ class ExploreAgent:
 
         prompts = explore_agent_prompt.get_prompts(html_xml)
         subtasks_raw = query(prompts, model=os.getenv("EXPLORE_AGENT_GPT_VERSION"), is_list=True)
+        for subtask in subtasks_raw:
+            if "parameters" not in subtask:
+                subtask['parameters'] = {}
+            if "trigger_UIs" not in subtask:
+                subtask['trigger_UIs'] = []
+
         subtasks_raw = list(filter(lambda x: len(x["trigger_UIs"]) > 0, subtasks_raw))
 
         subtasks_trigger_uis = {subtask['name']: subtask['trigger_UIs'] for subtask in subtasks_raw}
@@ -36,4 +42,4 @@ class ExploreAgent:
 
         self.memory.add_hierarchy_xml(hierarchy_xml, new_node_index)
 
-        return new_node_index, available_subtasks
+        return new_node_index

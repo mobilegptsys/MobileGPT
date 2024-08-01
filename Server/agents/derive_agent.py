@@ -16,6 +16,7 @@ class DeriveAgent:
         self.subtask = None
         self.subtask_history = []
         self.action_history = []
+        self.response_history = []
 
     def init_subtask(self, subtask: dict, subtask_history: list) -> None:
         self.subtask = subtask
@@ -30,7 +31,10 @@ class DeriveAgent:
                                                         self.subtask_history + self.action_history, screen, examples)
         response = query(derive_prompt, model=os.getenv("DERIVE_AGENT_GPT_VERSION"))
         response['completion_rate'] = parse_completion_rate(response['completion_rate'])
-        self.action_history.append(response)
+        self.response_history.append(response)
+
+        history = "your past response: " + json.dumps(response) + " has been executed successfully."
+        self.action_history.append(history)
 
         example = self.__exemplify(response, screen)
         return response['action'], example
@@ -50,9 +54,10 @@ class DeriveAgent:
         self.memory.save_action(self.subtask['name'], finish_action, example=None)
 
     def summarize_actions(self) -> str:
-        if len(self.action_history) > 0:
-            action_summary = action_summarize_agent.summarize_actions(self.action_history)
+        if len(self.response_history) > 0:
+            action_summary = action_summarize_agent.summarize_actions(self.response_history)
             self.action_history = []
+            self.response_history = []
             return action_summary
 
     def __exemplify(self, response: dict, screen: str) -> dict:

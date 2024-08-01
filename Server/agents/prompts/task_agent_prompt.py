@@ -4,9 +4,7 @@ from utils.utils import generate_numbered_list
 def get_sys_prompt():
     sys_msg = (
         "Given the user instruction, check if it matches any of the known APIs. "
-        "If there's a match, modify the matched API's description and parameters "
-        "to cover both the original purpose and the new instruction, ensuring "
-        "the original meaning is not lost. If there's no match, suggest a new API.\n\n"
+        "If there's no match, suggest a new API.\n\n"
 
         "**Guidelines on how to find a matching API:**\n"
         "1. An API is a match if it covers all the steps "
@@ -39,6 +37,18 @@ def get_usr_prompt(instruction: str, known_tasks: list):
         "Response:\n"
         '{"reasoning":...(truncated for brevity)..., "found_match": "False",  "api": {"name":"findRestaurantsByCuisineAndLocation", "description": "find restaurants in a specific location based on the type of cuisine", "parameters":{"cuisine_type":"The type of cuisine to search for", "location":"The location to search in"}, "app": "unknown"}}\n'
         "[END Example #1]\n\n"
+
+        # "[Example #2]:\n"
+        # "User instruction: 'find me an Mexican restaurant in Washington'\n\n"
+        #     
+        # "List of known APIs:\n"
+        # '1. {"name":"findRestaurantsByLocation", "description": "find restaurants in a specific location.", "parameters":{"location":"The location to search in"}, "app": "unknown"}\n'
+        # '2. {"name":"findRestaurantsByCuisineAndLocation", "description": "find restaurants in a specific location based on the type of cuisine", "parameters":{"cuisine_type":"The type of cuisine to search for", "location":"The location to search in"}, "app": "unknown"}\n'
+        # "...(truncated for brevity)...\n\n"
+        # 
+        # "Response:\n"
+        # '{"reasoning":...(truncated for brevity)..., "found_match": "True",  "name":"findRestaurantsByCuisineAndLocation", "description": "find restaurants in a specific location based on the type of cuisine", "parameters":{"cuisine_type":"The type of cuisine to search for", "location":"The location to search in"}, "app": "unknown"}\n'
+        # "[END Example #2]\n\n"
 
         "[Example #2]:\n"
         "User instruction: 'send message to Bob saying hello'\n\n"

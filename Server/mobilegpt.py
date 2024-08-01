@@ -71,10 +71,10 @@ class MobileGPT:
 
         self.current_screen_xml = encoded_xml
 
-        page_index, available_subtasks = self.memory.search_node(parsed_xml, hierarchy_xml, encoded_xml)
+        page_index, new_subtasks = self.memory.search_node(parsed_xml, hierarchy_xml, encoded_xml)
 
         if page_index == -1:
-            page_index, available_subtasks = self.explore_agent.explore(parsed_xml, hierarchy_xml, encoded_xml)
+            page_index = self.explore_agent.explore(parsed_xml, hierarchy_xml, encoded_xml)
 
         if page_index != self.current_page_index:
             self.memory.init_page_manager(page_index)
@@ -83,13 +83,21 @@ class MobileGPT:
             if self.subtask_status == Status.LEARN:
                 self.__finish_subtask()
 
+        available_subtasks = self.memory.get_available_subtasks(page_index)
+        if len(new_subtasks) > 0:
+            available_subtasks += new_subtasks
+
         if self.current_subtask is None:
             next_subtask = self.memory.get_next_subtask(page_index, self.qa_history, self.current_screen_xml)
 
             if not next_subtask:
-                response = self.select_agent.select(available_subtasks, self.subtask_history,
-                                                    self.qa_history,
-                                                    encoded_xml)
+                response, new_action = self.select_agent.select(available_subtasks, self.subtask_history,
+                                                                self.qa_history,
+                                                                encoded_xml)
+
+                if new_action:
+                    self.memory.add_new_action(page_index)
+                    available_subtasks = self.memory.get_available_subtasks(page_index)
 
                 next_subtask = response['action']
                 if next_subtask['name'] != 'read_screen':
@@ -105,7 +113,7 @@ class MobileGPT:
             self.derive_agent.init_subtask(next_subtask, self.subtask_history)
             self.current_subtask = next_subtask
 
-            if next_subtask['name'] in ['finish', 'read_screen', 'scroll_screen']:
+            if next_subtask['name'] in ['finish', 'speak', 'scroll_screen']:
                 return self.__handle_primitive_subtask(next_subtask)
 
         subtask_parameters = self.current_subtask['parameters']
@@ -114,13 +122,17 @@ class MobileGPT:
                 raw_subtask = next(
                     (subtask for subtask in available_subtasks if subtask['name'] == self.current_subtask['name']),
                     None)
+                print(raw_subtask)
                 if raw_subtask:
+                    if isinstance(raw_subtask['parameters'], str):
+                        raw_subtask['parameters'] = json.loads(raw_subtask['parameters'])
                     question = raw_subtask['parameters'][key]
                     ask_action = {"name": "ask", "parameters": {"info_name": key, "question": question}}
                     return ask_action
 
         next_action = self.memory.get_next_action(self.current_subtask, self.encoded_xml)
-        current_action_data = {"page_index": self.current_page_index, "action": next_action, "screen": self.encoded_xml, "example": {}}
+        current_action_data = {"page_index": self.current_page_index, "action": next_action, "screen": self.encoded_xml,
+                               "example": {}}
         if next_action:
             self.subtask_status = Status.RECALL
             if "examples" in next_action:
@@ -143,7 +155,7 @@ class MobileGPT:
         self.current_subtask_data['actions'].append(current_action_data)
 
         if next_action['name'] == 'finish':
-            self.__finish_subtask(mark_finish=False)
+            self.__finish_subtask(mark_finish=False, explicit_finish=True)
             next_action = self.get_next_action(parsed_xml, hierarchy_xml, encoded_xml)
 
         return next_action
@@ -159,8 +171,9 @@ class MobileGPT:
         else:
             log(f"Something wrong. Cannot find {info_name} inside subtask: {self.current_subtask}", "red")
 
-    def __finish_subtask(self, mark_finish=True):
+    def __finish_subtask(self, mark_finish=True, explicit_finish=False):
         log("finish subtask!!", "red")
+        log(f"subtask: {self.subtask_status}, task: {self.task_status}", "red")
         if self.subtask_status == Status.LEARN and self.task_status == Status.LEARN:
             if mark_finish:
                 finish_action = {"name": "finish", "parameters": {}}
@@ -177,9 +190,10 @@ class MobileGPT:
             if action_summary:
                 self.subtask_history.append(action_summary)
 
-        if self.subtask_status == Status.RECALL and self.task_status == Status.RECALL:
-            history = f"Performed an action: {self.current_subtask}"
-            self.subtask_history.append(history)
+        if self.subtask_status == Status.RECALL:
+            if explicit_finish:
+                history = f"Performed an action: {self.current_subtask}"
+                self.subtask_history.append(history)
 
         self.current_subtask = None
         self.subtask_status = Status.WAIT
@@ -189,7 +203,7 @@ class MobileGPT:
         Prepare for diverging to a new subtask.
         Returns:
         """
-        history = f"I am in the middle of performing an action: {self.current_subtask}"
+        history = f"I have performed an action: {self.current_subtask}. But I am not sure if it was successful."
         self.subtask_history.append(history)
 
         self.current_subtask = None
@@ -210,7 +224,7 @@ class MobileGPT:
             self.__finish_task()
             return
 
-        elif next_subtask['name'] == 'read_screen':
+        elif next_subtask['name'] == 'speak':
             msg = next_subtask['parameters']['message']
             speak_action = {"name": "speak", "parameters": {"message": msg}}  # speak action
             self.socket.send(json.dumps(speak_action).encode())
@@ -222,24 +236,22 @@ class MobileGPT:
             self.subtask_status = Status.WAIT
 
             completion_rate = parse_completion_rate(next_subtask['parameters']['completion_rate'])
-            if completion_rate == 100:
-                return self.__finish_task()
-            else:
-                return self.get_next_action()
+            return self.get_next_action()
 
         elif next_subtask['name'] == 'scroll_screen':
             direction = next_subtask['parameters']['direction']
-            target_info = next_subtask['parameters']['target_info']
+            index = next_subtask['parameters']['scroll_ui_index']
 
-            scroll_action = {"name": "scroll", "parameters": {"direction": direction}}
+            scroll_action = {"name": "scroll", "parameters": {"index": index, "direction": direction}}
             self.socket.send(json.dumps(scroll_action).encode())
             self.socket.send("\r\n".encode())
 
-            history = f"Scrolled screen {direction} to find '{target_info}'"
-            self.subtask_history.append(history)
+            if self.task_status == Status.LEARN:
+                target_info = next_subtask['parameters']['target_info']
+                history = f"Scrolled screen {direction} to find '{target_info}'"
+                self.subtask_history.append(history)
             self.current_subtask = None
             self.subtask_status = Status.WAIT
-            return self.get_next_action()
 
     def __finish_task(self) -> None:
         """
@@ -263,12 +275,12 @@ class MobileGPT:
                                            },
                                "actions": []})
         if self.task_status == Status.LEARN:
-            self.task_path = self.memory.merge_subtasks(self.task_path)
+            # self.task_path = self.memory.merge_subtasks(self.task_path)
 
             global_task_database_path = f"./memory/tasks.csv"
             global_task_database = pd.read_csv(global_task_database_path)
             global_task_database = pd.concat([global_task_database, pd.DataFrame([self.task])], ignore_index=True)
             global_task_database.to_csv(global_task_database_path, index=False)
 
-        self.memory.save_task(self.task_path)
+            self.memory.save_task(self.task_path)
         # self.memory.save_task_path(self.task_path)

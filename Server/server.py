@@ -126,8 +126,7 @@ class Server:
                     message = json.dumps(action)
                     client_socket.send(message.encode())
                     client_socket.send("\r\n".encode())
-                else:
-                    log("action is None something went wrong!!", "red")
+
 
             elif message_type == 'A':
                 qa_string = b''

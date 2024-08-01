@@ -23,12 +23,16 @@ class PageManager:
 
         subtask_header = ['name', 'description', 'parameters', 'example']
         action_header = ['subtask_name', 'step', 'action', 'example']
+        available_subtask_header = ['name', 'description', 'parameters']
 
         if not os.path.exists(page_path + f"/{page_index}/"):
             os.makedirs(page_path + f"/{page_index}/")
 
         self.subtask_db_path = page_path + f"{page_index}/subtasks.csv"
         self.subtask_db = init_database(self.subtask_db_path, subtask_header)
+
+        self.available_subtask_db_path = page_path + f"{page_index}/available_subtasks.csv"
+        self.available_subtask_db = init_database(self.available_subtask_db_path, available_subtask_header)
 
         self.action_db_path = page_path + f"{page_index}/actions.csv"
         self.action_db = init_database(self.action_db_path, action_header)
@@ -38,16 +42,26 @@ class PageManager:
         for action in self.action_data:
             action['traversed'] = False
 
-    def save_subtask(self, subtask_raw: dict, example: dict):
-        subtask_data = {
-            "name": subtask_raw['name'],
-            "description": subtask_raw['description'],
-            "parameters": json.dumps(subtask_raw['parameters']),
-            "example": json.dumps(example)
-        }
+    def get_available_subtasks(self):
+        return self.available_subtask_db.to_dict(orient='records')
 
-        self.subtask_db = pd.concat([self.subtask_db, pd.DataFrame([subtask_data])], ignore_index=True)
-        self.subtask_db.to_csv(self.subtask_db_path, index=False)
+    def add_new_action(self, new_action):
+        self.available_subtask_db = pd.concat([self.available_subtask_db, pd.DataFrame([new_action])], ignore_index=True)
+        self.available_subtask_db.to_csv(self.available_subtask_db_path, index=False)
+
+    def save_subtask(self, subtask_raw: dict, example: dict):
+        filtered_subtask = self.subtask_db[(self.subtask_db['name'] == subtask_raw['name'])]
+        if len(filtered_subtask) == 0:
+            subtask_data = {
+                "name": subtask_raw['name'],
+                "description": subtask_raw['description'],
+                "parameters": json.dumps(subtask_raw['parameters']),
+                "example": json.dumps(example)
+            }
+
+            self.subtask_db = pd.concat([self.subtask_db, pd.DataFrame([subtask_data])], ignore_index=True)
+            self.subtask_db.to_csv(self.subtask_db_path, index=False)
+            log("added new subtask to the database")
 
     def get_next_subtask_data(self, subtask_name: str) -> dict:
         # Filter the subtask_db for rows matching the specific 'name'

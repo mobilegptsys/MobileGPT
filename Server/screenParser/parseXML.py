@@ -15,7 +15,6 @@ def reformat_xml(xml_string):
 
         attrib_bool = {
             "checkable": "checkable",
-            "checked": "checked",
             "clickable": "clickable",
             "scrollable": "scrollable",
             "long-clickable": "long-clickable",
@@ -55,12 +54,14 @@ def reformat_xml(xml_string):
                 text = new_element.attrib.get("text", "")
                 del new_element.attrib["text"]
                 new_element.text = text
+        elif new_text_attrib.get("checkable", "") == "true":
+            new_text_attrib["checked"] = element.attrib.get("checked", "false")
+            del new_text_attrib["checkable"]
+            new_element = ET.Element("checker", new_text_attrib)
 
         elif new_text_attrib.get("clickable", "") == "true":
+            del new_text_attrib["clickable"]
             new_element = ET.Element("button", new_text_attrib)
-
-        elif new_text_attrib.get("checkable", "") == "true":
-            new_element = ET.Element("checker", new_text_attrib)
 
         elif class_name_short in ["FrameLayout", "LinearLayout", "RelativeLayout", "ViewGroup", "ConstraintLayout",
                                   "unknown"]:
@@ -87,7 +88,7 @@ def reformat_xml(xml_string):
             if new_child is not None:
                 new_element.append(new_child)
 
-        if len(element) == 0 and len(new_element.attrib) <= 4:
+        if (new_element.tag not in ['button', 'checker']) and (len(element) == 0 and len(new_element.attrib) <= 4):
             if new_element.text is None or len(new_element.text) == 0:
                 return None
 
@@ -149,17 +150,19 @@ def remove_nodes_with_empty_bounds(element):
 def simplify_structure(xml_string):
     tree = ET.ElementTree(ET.fromstring(xml_string))
     root = tree.getroot()
-
     def simplify_element(elem):
         while len(list(elem)) == 1 and all(x not in elem.attrib for x in ['text', 'description']):
+            if elem.tag in ['button', 'checker']:
+                break
             child = elem[0]
             elem.tag = child.tag
             elem.attrib = child.attrib
             elem.text = child.text
-            elem[:] = child[:]
+            elem[:] = child[:]  # Replace elem's children with child's children
 
         for subelem in list(elem):
             simplify_element(subelem)
+
     simplify_element(root)
 
     return ET.tostring(root, encoding='unicode')
@@ -167,7 +170,6 @@ def simplify_structure(xml_string):
 def remove_redundancies(xml_string):
     tree = ET.ElementTree(ET.fromstring(xml_string))
     root = tree.getroot()
-
     def elem_key(elem):
         return (
             elem.tag, tuple(elem.attrib.items()),
@@ -190,14 +192,11 @@ def remove_redundancies(xml_string):
 
 
 def parse(raw_xml):
-    # Reformat the XML
     reformatted_xml = reformat_xml(raw_xml)
 
-    # Remove unnecessary wrapper UI (UI with only one child)
     simplified_xml = simplify_structure(reformatted_xml)
     root = ET.fromstring(simplified_xml)
 
-    # Remove empty UI.
     remove_nodes_with_empty_bounds(root)
     parsed_xml = ET.tostring(root, encoding='unicode')
 
