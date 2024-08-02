@@ -81,9 +81,9 @@ public class MainActivity extends AppCompatActivity {
     // 접근성 설정화면으로 넘겨주는 부분
     public void setAccessibilityPermissions() {
         AlertDialog.Builder gsDialog = new AlertDialog.Builder(this);
-        gsDialog.setTitle("접근성 권한 설정");
-        gsDialog.setMessage("접근성 권한을 필요로 합니다");
-        gsDialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+        gsDialog.setTitle("Accessbility Service");
+        gsDialog.setMessage("This requires Accessibility Service");
+        gsDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // 설정화면으로 보내는 부분
                 Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
