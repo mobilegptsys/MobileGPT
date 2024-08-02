@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<div id="decor_content_parent" index="3">
+	<div id="action_bar" index="5">
+		<button description="Collapse" index="6"/>
+		<div id="search_plate" index="10">
+			<button text="laundry" id="search_src_text" long-clickable="true" index="11"/>
+			<button id="search_close_btn" description="Clear query" index="12"/>
+		</div>
+		<aq index="13">
+			<button id="change_view" description="Change view" index="14"/>
+			<button description="More options" long-clickable="true" index="15"/>
+		</aq>
+	</div>
+	<div id="calendar_coordinator" index="17">
+		<button scrollable="true" index="19">
+			<div id="month_calendar_holder" index="20">
+				<button id="top_left_arrow" index="21"/>
+				<button text="August" id="top_value" index="22"/>
+				<button id="top_right_arrow" index="23"/>
+				<div id="month_view_wrapper" index="24">
+					<View id="month_view" index="25"/>
+					<button id="month_view_background" index="26"/>
+					<button id="month_view_background" index="27"/>
+					<button id="month_view_background" index="28"/>
+					<button id="month_view_background" index="29"/>
+					<button id="month_view_background" index="30"/>
+					<button id="month_view_background" index="31"/>
+					<button id="month_view_background" index="32"/>
+					<button id="month_view_background" index="33"/>
+					<button id="month_view_background" index="34"/>
+					<button id="month_view_background" index="35"/>
+					<button id="month_view_background" index="36"/>
+					<button id="month_view_background" index="37"/>
+					<button id="month_view_background" index="38"/>
+					<button id="month_view_background" index="39"/>
+					<button id="month_view_background" index="40"/>
+					<button id="month_view_background" index="41"/>
+					<button id="month_view_background" index="42"/>
+					<button id="month_view_background" index="43"/>
+					<button id="month_view_background" index="44"/>
+					<button id="month_view_background" index="45"/>
+					<button id="month_view_background" index="46"/>
+					<button id="month_view_background" index="47"/>
+					<button id="month_view_background" index="48"/>
+					<button id="month_view_background" index="49"/>
+					<button id="month_view_background" index="50"/>
+					<button id="month_view_background" index="51"/>
+					<button id="month_view_background" index="52"/>
+					<button id="month_view_background" index="53"/>
+				</div>
+			</div>
+		</button>
+		<button id="search_holder" index="54">
+			<RecyclerView id="search_results_list" index="55">
+				<button text="August 2 (Fri)" id="event_section_title" long-clickable="true" index="56"/>
+				<button id="event_item_frame" long-clickable="true" index="57">
+					<div id="event_item_holder" index="58">
+						<p id="event_item_start" index="59">05:00 PM</p>
+						<p id="event_section_title" index="60">laundry</p>
+						<img id="event_item_color" index="61"/>
+						<p id="event_item_description" index="62"/>
+					</div>
+				</button>
+			</RecyclerView>
+		</button>
+	</div>
+</div>

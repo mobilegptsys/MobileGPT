@@ -1,0 +1,8 @@
+name,description,parameters
+search_event,Search for an event in the calendar.,{'search_query': 'What event are you searching for?'}
+change_view,Change the calendar view.,"{'view_type': 'Which view do you want to switch to? (e.g., Day, Week, Month)'}"
+open_more_options,Open more options menu.,{}
+navigate_month,Navigate to the previous or next month in the calendar.,{'direction': 'Which direction do you want to navigate? (previous or next)'}
+select_date,Select a specific date in the calendar.,{'date': 'Which date do you want to select?'}
+create_new_event,Create a new event in the calendar.,"{'event_title': 'What is the title of the event?', 'event_date': 'What is the date of the event?', 'event_time': 'What is the time of the event?', 'event_description': 'What is the description of the event?'}"
+click_new_event_button,Click on the 'New Event' button to initiate the event creation process.,{}

@@ -1,1 +1,3 @@
 name,description,parameters,app
+createEvent,create a new event with a specified name,{'event_name': 'The name of the event to create'},Simple Calendar
+searchEvent,search for an event with a specified name,{'event_name': 'The name of the event to search for'},Simple Calendar

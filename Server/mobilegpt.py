@@ -96,7 +96,7 @@ class MobileGPT:
                                                                 encoded_xml)
 
                 if new_action:
-                    self.memory.add_new_action(page_index)
+                    self.memory.add_new_action(new_action, page_index)
                     available_subtasks = self.memory.get_available_subtasks(page_index)
 
                 next_subtask = response['action']
@@ -117,18 +117,18 @@ class MobileGPT:
                 return self.__handle_primitive_subtask(next_subtask)
 
         subtask_parameters = self.current_subtask['parameters']
-        for key, value in subtask_parameters.items():
-            if value == "unknown":
-                raw_subtask = next(
-                    (subtask for subtask in available_subtasks if subtask['name'] == self.current_subtask['name']),
-                    None)
-                print(raw_subtask)
-                if raw_subtask:
-                    if isinstance(raw_subtask['parameters'], str):
-                        raw_subtask['parameters'] = json.loads(raw_subtask['parameters'])
-                    question = raw_subtask['parameters'][key]
-                    ask_action = {"name": "ask", "parameters": {"info_name": key, "question": question}}
-                    return ask_action
+        # for key, value in subtask_parameters.items():
+        #     if value == "unknown":
+        #         raw_subtask = next(
+        #             (subtask for subtask in available_subtasks if subtask['name'] == self.current_subtask['name']),
+        #             None)
+        #         print(raw_subtask)
+        #         if raw_subtask:
+        #             if isinstance(raw_subtask['parameters'], str):
+        #                 raw_subtask['parameters'] = json.loads(raw_subtask['parameters'])
+        #             question = raw_subtask['parameters'][key]
+        #             ask_action = {"name": "ask", "parameters": {"info_name": key, "question": question}}
+        #             return ask_action
 
         next_action = self.memory.get_next_action(self.current_subtask, self.encoded_xml)
         current_action_data = {"page_index": self.current_page_index, "action": next_action, "screen": self.encoded_xml,

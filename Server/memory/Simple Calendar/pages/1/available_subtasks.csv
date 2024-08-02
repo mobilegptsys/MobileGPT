@@ -1,0 +1,14 @@
+name,description,parameters
+navigate_up,Navigate back to the previous screen.,{}
+save_event,Save the event with the provided details.,"{'title': 'What is the title of the event?', 'location': 'Where is the event located?', 'description': 'What is the description of the event?', 'all_day': 'Is the event an all-day event? [true, false]', 'start_date': 'What is the start date of the event?', 'start_time': 'What is the start time of the event?', 'end_date': 'What is the end date of the event?', 'end_time': 'What is the end time of the event?', 'reminder_1': 'When should the first reminder be set?', 'reminder_2': 'When should the second reminder be set?'}"
+set_event_title,Set the title of the event.,{'title': 'What is the title of the event?'}
+set_event_location,Set the location of the event.,{'location': 'Where is the event located?'}
+show_event_on_map,Show the event location on the map.,{}
+set_event_description,Set the description of the event.,{'description': 'What is the description of the event?'}
+toggle_all_day_event,Toggle the all-day event setting.,"{'all_day': 'Is the event an all-day event? [true, false]'}"
+set_event_start_date,Set the start date of the event.,{'start_date': 'What is the start date of the event?'}
+set_event_start_time,Set the start time of the event.,{'start_time': 'What is the start time of the event?'}
+set_event_end_date,Set the end date of the event.,{'end_date': 'What is the end date of the event?'}
+set_event_end_time,Set the end time of the event.,{'end_time': 'What is the end time of the event?'}
+set_event_reminder_1,Set the first reminder for the event.,{'reminder_1': 'When should the first reminder be set?'}
+add_another_reminder,Add another reminder for the event.,{'reminder_2': 'When should the second reminder be set?'}
