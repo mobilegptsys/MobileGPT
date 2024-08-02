@@ -1,3 +1,0 @@
-name,path
-createEvent,"{""0"": [""click_new_event_button"", ""finish""], ""1"": [""set_event_title"", ""save_event""]}"
-searchEvent,"{""0"": [""search_event""], ""2"": [""search"", ""finish""]}"

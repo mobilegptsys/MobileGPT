@@ -1,7 +1,0 @@
-name,description,parameters
-collapse_action_bar,Collapse the action bar to hide it.,{}
-search,Initiate a search in the app.,{'search_query': 'What would you like to search for?'}
-change_view,Change the current view of the calendar.,{}
-open_more_options,Open the more options menu.,{}
-navigate_month,Navigate to a different month in the calendar.,"{'direction': 'Which direction would you like to navigate? [left, right]'}"
-select_date,Select a specific date in the calendar.,{'date': 'Which date would you like to select?'}
