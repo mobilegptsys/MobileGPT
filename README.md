@@ -25,8 +25,6 @@ pip install --upgrade pip
 pip install -r ./requirements.txt
 ```
 
-[//]: # (If successfully installed, you should be able to execute `droidbot -h`.)
-
 # How to use
 Our MobileGPT system consists of a Python Server and an Android Client app. You need to run both the server and the client at the same time to see how it works.
 
@@ -87,16 +85,20 @@ public static final int HOST_PORT = 12345;
 ## Run
 Now you're all set. Let's run it
 
-![Explain](https://github.com/mobile-gpt/MobileGPT/assets/152391659/1f9dd04e-da1a-40d2-80fc-b15785377d58)
+![alt text](https://github.com/mobilegptsys/MobileGPT/blob/main/explain.png?raw=true)
 
+0. Make sure that your server is correctly running when you first run the MobileGPT app.
 1. When you first run the MobileGPT app, it will ask you to allow the Accessibility Service. 
     + Go to the settings and allow the Accessibility Service for the MobileGPT app.
     + If you don't allow the Accessibility Service, the app will not work properly.
 2. If it is the first time you run the app, it will take quite a while to analyze apps installed on your device.
    + After the analysis is done, you will see the list of apps that MobileGPT can interact with.
+   + For efficiency, MobileGPT fetches app information only when the Accessibility Service gets enabled.
+   + If this procedure is not done properly, MobileGPT can't find any apps to interact with. If so, diable the accessibility service and re-enable it while the server is running.
+   + When you install new apps, do this procedure again to reinitialize app list.
 
 3. Return to the MobileGPT app  and input the desired user Instruction in the red box.
-4. then click the Blue box [Set New Instruction] button to execute it.
+4. then click the Green box [Set New Instruction] button to execute it.
 5. MobileGPT will automatically launch appropriate app and interact with it to complete the given instruction.
 
 # Offline Explorer
