@@ -61,21 +61,21 @@ Now, you can run the server by executing the following command:
 
 ```shell
 cd Server
-python ./main.py <server_ip> <server_port>
+python ./main.py
 
-#For example 
-#python ./main.py 000.000.000.000 12345
+Input this IP address into the app. : [123.456.789.012]
+#This is the IP address of your server. 
 ```
 
 ## MobileGPT Mobile App (./App/)
 + The version of our MobileGPT's SDK must be at least 33.
-+ Replace the ./App/app/src/main/java/com/example/MobileGPT/MobileGPTGlobal.java file's HOST_IP address and HOST_PORT with the ip address and port of the server.
++ Android Studio makes it easy to test our app.(https://developer.android.com/studio/publish/preparing)
++ Replace the ./App/app/src/main/java/com/example/MobileGPT/MobileGPTGlobal.java file's HOST_IP address with the ip address of the server. #Note the IP address printed when running the server
 
 
 ```java
 // Replace with the ip address and port of the server
-public static final String HOST_IP = "000.000.000.000";
-public static final int HOST_PORT = 12345;
+public static final String HOST_IP = "123.456.789.012";
 ```
 
 + Make sure that your server is correctly running. 
@@ -147,6 +147,7 @@ public static final int HOST_PORT = 12345;
 # Note
 + MobileGPT is a research software. It may produce unexpected behavior or results (automatic payments, unsubscribing the account), so it is recommended to check its behavior carefully.
 + The open-source version of MobileGPT does not include Human-in-the-Loop memory repair. But you can modify the memory manually in ./Server/memory/ folder.
++ There may be a cost to using the API for operation. On average, it will cost about $0.13 per task with a consumption of 13k tokens. Please refer to the paper for more details. 
 # About Dataset
 ## Dataset Structure
 ```
