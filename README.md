@@ -98,9 +98,11 @@ Now you're all set. Let's run it
    + If this procedure is not done properly, MobileGPT can't find any apps to interact with. If so, diable the accessibility service and re-enable it while the server is running.
    + When you install new apps, do this procedure again to reinitialize app list.
 
-3. Return to the MobileGPT app  and input the desired user Instruction in the red box.
+3. Return to the MobileGPT app and input the desired user Instruction in the red box.
 4. then click the Green box [Set New Instruction] button to execute it.
 5. MobileGPT will automatically launch appropriate app and interact with it to complete the given instruction.
+
++During operation, the Explore, Select, and Derive phases are logged in blue, the input prompts in yellow, and the output prompts in green. You can refer to that log to help you understand the operation.
 
 # Offline Explorer
 Our open-source version of MobileGPT does not include Random Explorer. Instead, we provide an offline explorer that lets you explore app pages manually. 
