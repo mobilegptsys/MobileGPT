@@ -103,6 +103,7 @@ Now you're all set. Let's run it
 5. MobileGPT will automatically launch appropriate app and interact with it to complete the given instruction.
 
 +During operation, the Explore, Select, and Derive phases are logged in blue, the input prompts in yellow, and the output prompts in green. You can refer to that log to help you understand the operation.
++The log folder also stores the smartphone's screen history sent by the APP.
 
 # Offline Explorer
 Our open-source version of MobileGPT does not include Random Explorer. Instead, we provide an offline explorer that lets you explore app pages manually. 
