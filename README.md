@@ -61,6 +61,9 @@ Now, you can run the server by executing the following command:
 cd Server
 python ./main.py
 
+--------------------------------------------------------
+
+Server is listening on 123.456.789.012:12345
 Input this IP address into the app. : [123.456.789.012]
 #This is the IP address of your server. 
 ```
@@ -121,6 +124,9 @@ Now, you can run the server by executing the following command:
 cd Server
 python ./main.py
 
+--------------------------------------------------------
+
+Server is listening on 123.456.789.012:12345
 Input this IP address into the app. : [123.456.789.012]
 #This is the IP address of your server. 
 ```
