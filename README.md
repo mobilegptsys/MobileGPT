@@ -119,18 +119,17 @@ Now, you can run the server by executing the following command:
 
 ```shell
 cd Server
-python ./main.py <server_ip> <server_port>
+python ./main.py
 
-#For example 
-#python ./main.py 000.000.000.000 12345
+Input this IP address into the app. : [123.456.789.012]
+#This is the IP address of your server. 
 ```
 
 ## App_Explorer (./App_Explorer/)
-+ Replace the ./App_Explorer/app/src/main/java/com/example/hardcode/MobileGPTGlobal.java file's HOST_IP address and HOST_PORT with the ip address and port of the server.
++ Replace the ./App_Explorer/app/src/main/java/com/example/hardcode/MobileGPTGlobal.java file's HOST_IP address with the ip address of the server.
 ```java
-// Replace with the ip address and port of the server
-public static final String HOST_IP = "000.000.000.000";
-public static final int HOST_PORT = 12345;
+// Replace with the ip address of the server
+public static final String HOST_IP = "123.456.789.012";
 ```
 + Build and install the app on your device.
 
