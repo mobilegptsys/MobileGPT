@@ -22,12 +22,20 @@ class Explorer:
             os.makedirs(self.log_directory)
 
     def open(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            # Connecting to an external IP address (Google DNS in this example)
+            s.connect(("8.8.8.8", 80))
+            real_ip = s.getsockname()[0]
+        finally:
+            s.close()
+    
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind((self.host, self.port))
         server.listen()
 
-        log(f"Server is listening on {self.host}:{self.port}", "red")
+        log(f"Server is listening on {real_ip}:{self.port}", "red")
 
         while True:
             client_socket, client_address = server.accept()

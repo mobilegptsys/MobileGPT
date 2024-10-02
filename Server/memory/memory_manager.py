@@ -169,7 +169,7 @@ class Memory:
             next_subtask_data = self.page_manager.get_next_subtask_data(next_subtask_name)
 
             next_subtask = {'name': next_subtask_data['name'], 'description': next_subtask_data['description'],
-                            'parameters': json.loads(next_subtask_data['parameters'])}
+                            'parameters': json.loads(next_subtask_data['parameters']) if next_subtask_data['parameters'] != "\"{}\"" else {}}
 
             if len(next_subtask['parameters']) > 0:
                 params = param_fill_agent.parm_fill_subtask(instruction=self.instruction,
@@ -267,7 +267,7 @@ class Memory:
             self.task_db = pd.concat([self.task_db, pd.DataFrame([new_task_path])], ignore_index=True)
 
         self.task_db.to_csv(self.task_db_path, index=False)
-        log(f":::SAVE::: Path saved: {new_task_path}")
+        log(f":::TASK SAVE::: Path saved: {new_task_path}")
 
     def save_task_path(self, new_task_path: dict):
         for page_index, subtasks in new_task_path.items():

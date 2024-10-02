@@ -1,6 +1,7 @@
 import json
 import os
 from enum import Enum
+import time
 
 import pandas as pd
 
@@ -53,6 +54,9 @@ class MobileGPT:
         self.explore_agent = ExploreAgent(self.memory)
         self.select_agent = SelectAgent(self.memory, self.instruction)
         self.derive_agent = DeriveAgent(self.memory, self.instruction)
+        
+        self.start_time = time.time()
+        self.end_time = 0
 
         if is_new_task:
             self.task_status = Status.LEARN
@@ -259,6 +263,14 @@ class MobileGPT:
         Returns:
         """
         log("------------END OF THE TASK------------", "blue")
+        
+        self.end_time = time.time()
+        elapsed_time = self.end_time - self.start_time
+        minutes = int(elapsed_time / 60)
+        seconds = int(elapsed_time)
+        
+        log(f"""Completed the execution of “{self.instruction}” you commanded, and the Task took a total of [{minutes} minutes({seconds} seconds)] to run.""", "green")
+        
         self.current_subtask = None
         self.subtask_status = Status.WAIT
 

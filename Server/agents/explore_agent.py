@@ -18,6 +18,8 @@ class ExploreAgent:
         Desc: Generate a new node based on the given screen xmls
         return: index of the new node.
         """
+        
+        log(f":::EXPLORE:::", "blue")
 
         prompts = explore_agent_prompt.get_prompts(html_xml)
         subtasks_raw = query(prompts, model=os.getenv("EXPLORE_AGENT_GPT_VERSION"), is_list=True)
