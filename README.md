@@ -28,8 +28,6 @@ pip install -r ./requirements.txt
 # How to use
 Our MobileGPT system consists of a Python Server and an Android Client app. You need to run both the server and the client at the same time to see how it works.
 
-Prepare IP address and appropriate port to communicate with the server in advance. The `IP`, `PORT` must be set to the same for server and client.
-
 ## MobileGPT Server (./Server/)
 First, You need some keys to operate the MobileGPT Server 
 
