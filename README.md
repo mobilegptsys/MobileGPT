@@ -72,7 +72,7 @@ Input this IP address into the app. : [123.456.789.012]
 
 
 ```java
-// Replace with the ip address and port of the server
+// Replace with the ip address of the server
 public static final String HOST_IP = "123.456.789.012";
 ```
 
