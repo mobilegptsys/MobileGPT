@@ -81,6 +81,7 @@ public static final String HOST_IP = "123.456.789.012";
 
 + Make sure that your server is correctly running. 
 + Build the app and install it on your smartphone.
++ You are suggested to set the language of your smartphone to English.
 
 
 ## Run
